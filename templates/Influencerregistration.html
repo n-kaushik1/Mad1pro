@@ -10,43 +10,30 @@
 <body>
     <div class="form_container">
       <h1 id="h1">Influencer Registration</h1>  
-      <form class="form">
+      <form class="form" action="/Influencerrregistration" method="post">
         <div class="mb-3">
           <label for="exampleInputEmail1" class="form-label">Username</label>
-          <input type="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+          <input type="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="uname">
           <div id="emailHelp" class="form-text">Pls never share your details with anyone else.</div>
         </div>
         <div class="mb-3">
           <label for="exampleInputPassword1" class="form-label">Password</label>
-          <input type="password" class="form-control" id="exampleInputPassword1">
+          <input type="password" class="form-control" id="exampleInputPassword1" name="pwd">
         </div>
-        Platform Presence 
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-          <label class="form-check-label" for="flexCheckDefault">
-            Youtube
-          </label>
+       
+        <div class="mb-3">
+          <label for="exampleInputEmail1" class="form-label"> Platform Presence(Enter name of each) </label>
+          <input type="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="plat">
         </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-          <label class="form-check-label" for="flexCheckChecked">
-            Twitter
-          </label>
-        </div>
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" checked>
-          <label class="form-check-label" for="flexCheckChecked">
-            Instagram
-          </label>
-        </div>
-        <br>
+       
         <div class="mb-3">
             <label for="exampleInputPassword1" class="form-label">Total number of Followers </label>
-            <input type="text" class="form-control" id="exampleInputPassword1">
+            <input type="text" class="form-control" id="exampleInputPassword1" name="flw">
           </div>
         <div><label for="exampleInputPassword1" class="form-label">Attach your picture</label>
           <input type="file" class="form-control" id="exampleInputPassword1"></div><br>
-        <button type="submit" class="btn btn-primary" id="bt">Register</button>
+        <button type="submit" class="btn btn-primary" id="bt">Register</button><br>
+        {{msg}}
       </form>
     </div>
 </body>

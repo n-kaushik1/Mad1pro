@@ -9,6 +9,7 @@ class Influencer_Info(db.Model):
     password=db.Column(db.String,nullable=False)
     platform=db.Column(db.String,nullable=False)
     Followers=db.Column(db.Integer,nullable=False)
+    role=db.Column(db.Integer,nullable=False,default=1)
     
 
 class Sponsor_Info(db.Model):
@@ -17,6 +18,7 @@ class Sponsor_Info(db.Model):
       user_name=db.Column(db.String,unique=True,nullable=False)
       password=db.Column(db.String,nullable=False)
       industry=db.Column(db.String,nullable=False)
+      role=db.Column(db.Integer,nullable=False,default=2)
 
 class Admin_Info(db.Model):
     __tablename__="admin_info"
