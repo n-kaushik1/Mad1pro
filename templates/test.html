@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        .bd {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .profile-pic {
+            width: 100px;
+            height: 100px;
+            background-color: #a8d5ba;
+            border-radius: 50%;
+            margin: 0 auto;
+        }
+        .user-info {
+            text-align: center;
+            margin-top: 10px;
+        }
+        .user-info p {
+            margin: 5px 0;
+        }
+        .campaigns, .requests {
+            margin-top: 20px;
+        }
+        .campaign, .request {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .campaign .progress, .request .progress {
+            flex: 1;
+            margin: 0 10px;
+        }
+        .button {
+            background-color: #ffc107;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button-accept {
+            background-color: #8bc34a;
+        }
+        .button-reject {
+            background-color: #f44336;
+        }
+    </style>
+</head>
+<body class="bd">
+    <div class="container">
+        <div class="profile-pic"></div>
+        <div class="user-info">
+            <h2>Welcome User_01</h2>
+            <p>Rating: 5</p>
+            <p>Earnings this month: $500</p>
+        </div>
+        <div class="campaigns">
+            <h3>Active Campaigns:</h3>
+            <div class="campaign">
+                <div>Campaign 01 | Progress 10%</div>
+                <button class="button">view</button>
+            </div>
+            <div class="campaign">
+                <div>Campaign 02 | Progress 40%</div>
+                <button class="button">view</button>
+            </div>
+        </div>
+        <div class="requests">
+            <h3>New Requests:</h3>
+            <div class="request">
+                <div>Campaign 07 | Company 01</div>
+                <button class="button button-view">view</button>
+                <button class="button button-accept">accept</button>
+                <button class="button button-reject">reject</button>
+            </div>
+            <div class="request">
+                <div>Campaign 05 | Company 01</div>
+                <button class="button button-view">view</button>
+                <button class="button button-accept">accept</button>
+                <button class="button button-reject">reject</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

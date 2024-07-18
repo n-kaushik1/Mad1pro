@@ -12,6 +12,8 @@
           <nav class="navigation">
             <h1 id="admindash"><b>Sponsor's Dashboard</b></h1>
             <div id="admin_button">
+             <a href="#" id="active" class="bt">Profile</a>
+             <a href="#"  class="bt">Campaigns</a>
              <a href="/adminsearch" class="bt">Find</a>
              <a href="#" class="bt">Stats</a>
              <a href="/userlogin" class="bt">Logout</a>
@@ -19,12 +21,36 @@
           </nav>     
     </header>
     <div class="greet">Welcome {{msg}}</div>
-          <div class="content">
-            Ongoing Campaigns:
+    <div class="bd">
+      <div class="container">
+          
+          <div class="campaigns">
+              <h3>Active Campaigns:</h3>
+              <div class="campaign">
+                  <div>Campaign 01 | Progress 10%</div>
+                  <button class="button">view</button>
+              </div>
+              <div class="campaign">
+                  <div>Campaign 02 | Progress 40%</div>
+                  <button class="button">view</button>
+              </div>
           </div>
-          <div class="content">
-            Flagged Users/Campaigns:
+          <div class="requests">
+              <h3>New Requests:</h3>
+              <div class="request">
+                  <div>Campaign 07 | Company 01</div>
+                  <button class="button button-view">view</button>
+                  <button class="button button-accept">accept</button>
+                  <button class="button button-reject">reject</button>
+              </div>
+              <div class="request">
+                  <div>Campaign 05 | Company 01</div>
+                  <button class="button button-view">view</button>
+                  <button class="button button-accept">accept</button>
+                  <button class="button button-reject">reject</button>
+              </div>
           </div>
+      </div>
    
     
 </body>

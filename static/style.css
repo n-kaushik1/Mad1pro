@@ -41,6 +41,11 @@
 }
 
 /* admin dashboard */
+#active{
+    background-color: #dce8ff;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
 .navigation{
     display: flex;
     background-color: rgb(248, 138, 5);
@@ -79,4 +84,154 @@
 }
 #dd{
     justify-content: end;
+}
+.container-unique {
+    padding: 20px;
+}
+
+
+.section-title-unique {
+    font-size: 16px;
+    margin: 20px 0 10px;
+    font-weight: bold;
+}
+.item-unique {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f4f4f4;
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+.item-unique div {
+    display: flex;
+    align-items: center;
+}
+.item-unique button {
+    padding: 5px 10px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+.item-unique button.view-unique {
+    background-color: #fff4cc;
+    border: 1px solid #ddd;
+}
+.item-unique button.remove-unique {
+    background-color: #ffcccc;
+    border: 1px solid #ddd;
+}
+
+/* adminsearch */
+
+.container {
+    padding: 20px;
+
+}
+.search-filter {
+    display: flex;
+    justify-content: end;
+    margin-bottom: 20px;
+    width: 25%;
+}
+.search-filter input[type="text"] {
+    padding: 5px;
+    font-size: 16px;
+    margin-right: 10px;
+    flex-grow: 1;
+}
+.search-filter button {
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f4f4f4;
+    padding: 10px;
+    border: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+.item div {
+    display: flex;
+    align-items: center;
+}
+.item button {
+    padding: 5px 10px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+.item button.view {
+    background-color: #fff4cc;
+    border: 1px solid #ddd;
+}
+.item button.flag {
+    background-color: #ffcccc;
+    border: 1px solid #ddd;
+}
+
+/* adminsearch-end */
+
+/* influencerdashboard */
+
+.bd {
+    font-family: Arial, sans-serif;
+    background-color: #f8f8f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 8px;
+}
+.container {
+    display: inline-flexbox;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    
+}
+.profile-pic {
+    width: 100px;
+    height: 100px;
+    background-color: #a8d5ba;
+    border-radius: 50%;
+    margin: 0 auto;
+}
+.user-info {
+    text-align: center;
+    margin-top: 10px;
+}
+.user-info p {
+    margin: 5px 0;
+}
+.campaigns, .requests {
+    margin-top: 20px;
+}
+.campaign, .request {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+.campaign .progress, .request .progress {
+    flex: 1;
+    margin: 0 10px;
+}
+.button {
+    background-color: #ffc107;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.button-accept {
+    background-color: #8bc34a;
+}
+.button-reject {
+    background-color: #f44336;
 }

@@ -71,6 +71,9 @@ def Influencerrregistration():
      
     return render_template("Influencerregistration.html")
 
+# @app.route("/adminsearch",methods=["GET","POST"])
+# def adminsearch():
+#     return render_template("adminsearch.html")
 
 
 
