@@ -1,6 +1,10 @@
-from flask import Flask,render_template,request
+from flask import Flask,render_template,request,redirect, url_for, session
 from flask import current_app as app
 from backend.models import *
+from datetime import datetime
+import os
+
+app.secret_key = os.urandom(24)
 
 
 
@@ -15,10 +19,28 @@ def adminlogin():
         pwd=request.form.get("pwd")
         usr=Admin_Info.query.filter_by(user_name=uname,password=pwd).first()
         if usr:
-            return render_template("admindashboard.html")
+            session['admin'] = uname
+            return redirect(url_for('admindashboard')) 
         else:
             return render_template("adminlogin.html",msg="Invalid credentials!!")
     return render_template("adminlogin.html",msg="")
+
+@app.route("/admindashboard", methods=["GET", "POST"])
+def admindashboard():
+    if 'admin' not in session:
+        return redirect(url_for('adminlogin'))
+    uname = session.get('admin')
+    campaigns = fetch_campaigns()
+    flagged_campaigns = Campaign_Info.query.filter_by(flagged="YES").all()
+    flagged_list = {campaign.id: [campaign.name, campaign.sponsor_info.user_name] for campaign in flagged_campaigns}
+    return render_template("admindashboard.html", user=uname, campaigns=campaigns, flagged=flagged_list)
+
+# @app.route("/adminsearch")
+# def adminsearch():
+#     if 'admin' not in session:
+#         return redirect(url_for('adminlogin'))
+#     return render_template("adminsearch.html")
+
 
 @app.route("/userlogin",methods=["GET","POST"])
 def userlogin():
@@ -71,9 +93,33 @@ def Influencerrregistration():
      
     return render_template("Influencerregistration.html")
 
-# @app.route("/adminsearch",methods=["GET","POST"])
-# def adminsearch():   
-#           return render_template("adminlogin.html",msg="")
+
+   
+def calculate_progress(start_date, end_date):
+    start = datetime.strptime(start_date, "%d-%m-%y")
+    end = datetime.strptime(end_date, "%d-%m-%y")
+    now = datetime.now()
+
+    if now < start:
+        return 0
+    elif now > end:
+        return 100
+    else:
+        total_duration = (end - start).days
+        elapsed_duration = (now - start).days
+        progress = (elapsed_duration / total_duration) * 100
+        return int(progress)  
+    
+def fetch_campaigns():
+    campaigns=Campaign_Info.query.filter_by(flagged="NO").all()
+    campaign_list={}
+    for campaign in campaigns:
+        progress = calculate_progress(campaign.start_date, campaign.end_date)
+        if campaign.id not in campaign_list.keys():
+            campaign_list[campaign.id] = [campaign.name, f"Progress {progress}%"]
+    return campaign_list
+
+
         
 
 

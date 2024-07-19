@@ -16,7 +16,8 @@ class Influencer_Info(db.Model):
     platform=db.Column(db.String,nullable=False)
     Followers=db.Column(db.Integer,nullable=False)
     role=db.Column(db.Integer,nullable=False,default=1)
-    adrequest_info=db.relationship("Adrequest_Info",backref="influencer_info")     
+    adrequest_info=db.relationship("Adrequest_Info",backref="influencer_info")
+    flagged=db.Column(db.String,nullable=False,default="NO")     
  
 
 class Sponsor_Info(db.Model):
@@ -26,7 +27,9 @@ class Sponsor_Info(db.Model):
       password=db.Column(db.String,nullable=False)
       industry=db.Column(db.String,nullable=False)
       role=db.Column(db.Integer,nullable=False,default=2)
-      campaign_info=db.relationship("Campaign_Info",backref="sponsor_info")     
+      campaign_info=db.relationship("Campaign_Info",backref="sponsor_info")
+      flagged=db.Column(db.String,nullable=False,default="NO")
+
 
 
 class Campaign_Info(db.Model):
@@ -40,7 +43,8 @@ class Campaign_Info(db.Model):
     visibility=db.Column(db.String,nullable=False,default="private")
     goals=db.Column(db.String,nullable=False)
     sponsor_id=db.Column(db.Integer,db.ForeignKey("sponsor_info.id"),nullable=False)
-    adrequest_info=db.relationship("Adrequest_Info",backref="campaign_info")     
+    adrequest_info=db.relationship("Adrequest_Info",backref="campaign_info")
+    flagged=db.Column(db.String,nullable=False,default="NO")     
    
 class Adrequest_Info(db.Model):
     __tablename__="adrequest_info"

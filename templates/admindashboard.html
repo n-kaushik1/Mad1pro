@@ -19,34 +19,35 @@
             </div>
           </nav>     
     </header>
-    <div class="greet">Welcome Admin</div>
+    <div class="greet">Welcome Admin-{{user}}</div>
+
     <div class="container-unique">
       <div class="section-title-unique">Ongoing Campaigns:</div>
-      <div class="item-unique">
-          <div>Campaign 01 | Progress 10%</div>
+    {%if campaigns %}
+       {%for key,values in campaigns.items()%}
+       <div class="item-unique">
+          <div>{{values[0]}} | {{values[1]}}</div>
           <button class="view-unique">View</button>
-      </div>
+       </div>
+       {%endfor%}
+    {%else%}
+     <h7>No Ongoing Campaigns</h7> 
+    {% endif %} 
+
+    <div class="section-title-unique">Flagged Users/Campaigns:</div>
+    {%if flagged%}
+      {%for key,values in flagged.items()%}
       <div class="item-unique">
-          <div>Campaign 02 | Progress 40%</div>
-          <button class="view-unique">View</button>
-      </div>
-      <div class="section-title-unique">Flagged Users/Campaigns</div>
-      <div class="item-unique">
-          <div>Campaign 04 | Company 01</div>
+          <div>{{ values[0] }} | {{ values[1] }}</div>
           <div>
               <button class="view-unique">View</button>
               <button class="remove-unique">Remove</button>
           </div>
       </div>
-      <div class="item-unique">
-          <div>Campaign 05 | Company 01</div>
-          <div>
-              <button class="view-unique">View</button>
-              <button class="remove-unique">Remove</button>
-          </div>
-      </div>
-  
-   
-    
+      {%endfor%}
+    {%else%}
+     <h7>No Flagged Users/Campaigns</h7>
+    {%endif%}  
+       
 </body>
 </html>
