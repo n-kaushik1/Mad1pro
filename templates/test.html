@@ -3,103 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
-    <style>
-        .bd {
-            font-family: Arial, sans-serif;
-            background-color: #f8f8f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-        }
-        .profile-pic {
-            width: 100px;
-            height: 100px;
-            background-color: #a8d5ba;
-            border-radius: 50%;
-            margin: 0 auto;
-        }
-        .user-info {
-            text-align: center;
-            margin-top: 10px;
-        }
-        .user-info p {
-            margin: 5px 0;
-        }
-        .campaigns, .requests {
-            margin-top: 20px;
-        }
-        .campaign, .request {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-        .campaign .progress, .request .progress {
-            flex: 1;
-            margin: 0 10px;
-        }
-        .button {
-            background-color: #ffc107;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .button-accept {
-            background-color: #8bc34a;
-        }
-        .button-reject {
-            background-color: #f44336;
-        }
-    </style>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <title>Admin Dashboard page</title>
 </head>
-<body class="bd">
-    <div class="container">
-        <div class="profile-pic"></div>
-        <div class="user-info">
-            <h2>Welcome User_01</h2>
-            <p>Rating: 5</p>
-            <p>Earnings this month: $500</p>
-        </div>
-        <div class="campaigns">
-            <h3>Active Campaigns:</h3>
-            <div class="campaign">
-                <div>Campaign 01 | Progress 10%</div>
-                <button class="button">view</button>
+<body>
+    <header>
+        <nav class="navigation">
+            <h1 id="admindash"><b>Admin's Dashboard</b></h1>
+            <div id="admin_button">
+                <a href="#" id="active" class="bt">Info</a>
+                <a href="/adminsearch" class="bt">Find</a>
+                <a href="#" class="bt">Stats</a>
+                <a href="/adminlogin" class="bt">Logout</a>
             </div>
-            <div class="campaign">
-                <div>Campaign 02 | Progress 40%</div>
-                <button class="button">view</button>
-            </div>
-        </div>
-        <div class="requests">
-            <h3>New Requests:</h3>
-            <div class="request">
-                <div>Campaign 07 | Company 01</div>
-                <button class="button button-view">view</button>
-                <button class="button button-accept">accept</button>
-                <button class="button button-reject">reject</button>
-            </div>
-            <div class="request">
-                <div>Campaign 05 | Company 01</div>
-                <button class="button button-view">view</button>
-                <button class="button button-accept">accept</button>
-                <button class="button button-reject">reject</button>
-            </div>
-        </div>
+        </nav>
+    </header>
+    <div class="greet">Welcome Admin-{{user}}</div>
+
+    <div class="container-unique">
+        <div class="section-title-unique">Ongoing Campaigns:</div>
+        {% if campaigns %}
+            {% for key, values in campaigns.items() %}
+                <div class="item-unique">
+                    <div>{{ values[0] }} | {{ values[1] }}</div>
+                    <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#viewcampaign{{ key }}">View</button>
+                    <div class="modal fade" id="viewcampaign{{ key }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewcampaignLabel{{ key }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="viewcampaignLabel{{ key }}">{{ values[0] }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    ...
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <h6>No Ongoing Campaigns</h6>
+        {% endif %}
+
+        <div class="section-title-unique">Flagged Users/Campaigns:</div>
+        {% if flagged %}
+            {% for key, values in flagged.items() %}
+                <div class="item-unique">
+                    <div>{{ values[1] }} | {{ values[2] }}</div>
+                    <div>
+                        <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#viewflagged{{ key }}">View</button>
+                        <div class="modal fade" id="viewflagged{{ key }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewflaggedLabel{{ key }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="viewflaggedLabel{{ key }}">{{ values[1] }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        ...
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="remove-unique">Remove</button>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <h6>No Flagged Users/Campaigns</h6>
+        {% endif %}
     </div>
 </body>
 </html>

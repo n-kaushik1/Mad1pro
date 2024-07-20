@@ -12,7 +12,7 @@
           <nav class="navigationsearch">
             <h1 id="admindash"><b>Admin's Dashboard</b></h1>
             <div id="admin_button">
-             <a href="admindashboard.html" class="bt">Info</a>
+             <a href="/admindashboard" class="bt">Info</a>
              <a href="#" id="active" class="bt">Find</a>
   
              <a href="#" class="bt">Stats</a>
@@ -25,35 +25,33 @@
           <input type="text" placeholder="Search">
           <button>Filter</button>
       </div>
-      
-      <div class="item">
-          <div>Campaign Name | Details</div>
+    {% if List%}  
+     {%for key,values in List.items()%}
+     <div class="item">
+        {% if values[0] == "campaign" %}
+          <div>{{ values[1] }} | {{ values[2] }}</div>
           <div>
               <button class="view">View</button>
-              <button class="flag">Request</button>
+              <button class="flag">Flag</button>
           </div>
-      </div>
-      <div class="item">
-          <div>Campaign Name | Details</div>
+        {% elif values[0] == "influencer" %}
+          <div>{{ values[1] }} | {{ values[2] }}</div>
           <div>
               <button class="view">View</button>
-              <button class="flag">Request</button>
+              <button class="flag">Flag</button>
           </div>
-      </div>
-      <div class="item">
-          <div>Campaign Name | Details</div>
+        {% elif values[0] == "sponsor" %}
+          <div>{{ values[1] }} | {{ values[2] }}</div>
           <div>
               <button class="view">View</button>
-              <button class="flag">Request</button>
+              <button class="flag">Flag</button>
           </div>
-      </div>
-      <div class="item">
-          <div>Campaign Name | Details</div>
-          <div>
-              <button class="view">View</button>
-              <button class="flag">Request</button>
-          </div>
-      </div>
+        {% endif %}
+     </div>
+     {%endfor%}
+    {%else%}
+      <h5>NO data to show</h5>  
+    {%endif%}    
     </div>
    
     

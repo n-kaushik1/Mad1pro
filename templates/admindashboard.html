@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/style.css" >
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Admin Dashboard page</title>
 </head>
@@ -27,27 +28,66 @@
        {%for key,values in campaigns.items()%}
        <div class="item-unique">
           <div>{{values[0]}} | {{values[1]}}</div>
-          <button class="view-unique">View</button>
+          <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#staticBackdrop">View</button>      
+          
        </div>
        {%endfor%}
     {%else%}
-     <h7>No Ongoing Campaigns</h7> 
+     <h6>No Ongoing Campaigns</h6> 
     {% endif %} 
-
     <div class="section-title-unique">Flagged Users/Campaigns:</div>
     {%if flagged%}
       {%for key,values in flagged.items()%}
-      <div class="item-unique">
-          <div>{{ values[0] }} | {{ values[1] }}</div>
-          <div>
-              <button class="view-unique">View</button>
-              <button class="remove-unique">Remove</button>
-          </div>
-      </div>
+       <div class="item-unique">
+        {% if values[0] == "campaign" %}
+            <div>{{ values[1] }} | {{ values[2] }}</div>
+            <div>
+                <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#staticBackdrop">View</button>
+                
+                <button class="remove-unique">Remove</button>
+            </div>
+        {% elif values[0] == "influencer" %}
+            <div>{{ values[1] }} | {{ values[2] }}</div>
+            <div>
+                <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#staticBackdrop">View</button>
+                
+                <button class="remove-unique">Remove</button>
+            </div>
+        {% elif values[0] == "sponsor" %}
+            <div>{{ values[1] }} | {{ values[2] }}</div>
+            <div>
+                <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#staticBackdrop">View</button>
+              
+                <button class="remove-unique">Remove</button>
+            </div>
+        {% endif %}
+       </div>
       {%endfor%}
     {%else%}
-     <h7>No Flagged Users/Campaigns</h7>
+     <h6>No Flagged Users/Campaigns</h6>
     {%endif%}  
        
 </body>
 </html>
+
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="staticBackdropLabel">modal</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          ...
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ 

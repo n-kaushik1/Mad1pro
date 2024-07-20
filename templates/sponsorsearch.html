@@ -12,9 +12,9 @@
           <nav class="navigation">
             <h1 id="admindash"><b>Sponsor's Dashboard</b></h1>
             <div id="admin_button">
-             <a href="#"  class="bt">Profile</a>
+             <a href="/sponsordashboard"  class="bt">Profile</a>
              <a href="#"  class="bt">Campaigns</a>
-             <a href="/adminsearch" id="active" class="bt">Find</a>
+             <a href="/sponsorsearch" id="active" class="bt">Find</a>
              <a href="#" class="bt">Stats</a>
              <a href="/userlogin" class="bt">Logout</a>
             </div>
@@ -26,34 +26,29 @@
             <button>Filter</button>
         </div>
         
-        <div class="item">
-            <div>Campaign Name | Details</div>
-            <div>
-                <button class="view">View</button>
-                
-            </div>
-        </div>
-        <div class="item">
-            <div>Campaign Name | Details</div>
-            <div>
-                <button class="view">View</button>
-                
-            </div>
-        </div>
-        <div class="item">
-            <div>Influencer Name | Details</div>
-            <div>
-                <button class="view">View</button>
-                <button class="button button-accept">Request</button>
-            </div>
-        </div>
-        <div class="item">
-            <div>Influencer Name | Details</div>
-            <div>
-                <button class="view">View</button>
-                <button class="button button-accept">Request</button>
-            </div>
-        </div>
-      </div>
+    {% if List%}  
+    {%for key,values in List.items()%}
+     <div class="item">
+        {% if values[0] == "campaign" %}
+          <div>{{ values[1] }} | {{ values[2] }}</div>
+          <div>
+              <button class="view">View</button>
+              <button class="req">Request</button>
+          </div>
+        {% elif values[0] == "influencer" %}
+          <div>{{ values[1] }} | {{ values[2] }}</div>
+          <div>
+              <button class="view">View</button>
+              <button class="req">Request</button>
+          </div>
+    
+        {% endif %}
+     </div>
+    {%endfor%}
+    {%else%}
+      <h5>NO data to show</h5>  
+    {%endif%}  
+      
+    </div>
 
   </body>

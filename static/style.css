@@ -195,10 +195,14 @@
 .profile-pic {
     width: 100px;
     height: 100px;
-    background-color: #a8d5ba;
     border-radius: 50%;
     margin: 0 auto;
 }
+.div{
+    display: flex;
+    
+}
+
 .user-info {
     text-align: center;
     margin-top: 10px;
@@ -235,3 +239,8 @@
 .button-reject {
     background-color: #f44336;
 }
+
+.item button.req {
+    background-color: #76c963;
+    border: 1px solid #ddd;
+}    

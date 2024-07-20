@@ -12,8 +12,8 @@
           <nav class="navigation">
             <h1 id="admindash"><b>Influencer's Dashboard</b></h1>
             <div id="admin_button">
-              <a href="#"  class="bt">Profile</a>
-             <a href="/adminsearch" id="active" class="bt">Find</a>
+              <a href="/influencerdashboard" class="bt">Profile</a>
+             <a href="/influencersearch" id="active" class="bt">Find</a>
              <a href="#" class="bt">Stats</a>
              <a href="/userlogin" class="bt">Logout</a>
             </div>
@@ -25,35 +25,30 @@
             <button>Filter</button>
         </div>
         
+        {% if List%}  
+        {%for key,values in List.items()%}
         <div class="item">
-            <div>Sponsor Name | Details</div>
-            <div>
-                <button class="view">View</button>
-                <button class="button button-accept">Request</button>
-            </div>
+            {% if values[0] == "campaign" %}
+             <div>{{ values[1] }} | {{ values[2] }}</div>
+             <div>
+                 <button class="view">View</button>
+                 <button class="req">Request</button>
+             </div>
+           
+            {% elif values[0] == "sponsor" %}
+             <div>{{ values[1] }} | {{ values[2] }}</div>
+             <div>
+                 <button class="view">View</button>
+                 <button class="req">Request</button>
+             </div>
+            {% endif %}
         </div>
-        <div class="item">
-            <div>Campaign Name | Details</div>
-            <div>
-                <button class="view">View</button>
-                <button class="button button-accept">Request</button>
-            </div>
-        </div>
-        <div class="item">
-            <div>Campaign Name | Details</div>
-            <div>
-                <button class="view">View</button>
-                <button class="button button-accept">Request</button>
-            </div>
-        </div>
-        <div class="item">
-            <div>Campaign Name | Details</div>
-            <div>
-                <button class="view">View</button>
-                <button class="button button-accept">Request</button>
-            </div>
-        </div>
-      </div>
+        {%endfor%}
+        {%else%}
+         <h5>NO data to show</h5>  
+        {%endif%}   
+         
+       </div>
      
       
   </body>

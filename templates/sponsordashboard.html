@@ -12,28 +12,31 @@
           <nav class="navigation">
             <h1 id="admindash"><b>Sponsor's Dashboard</b></h1>
             <div id="admin_button">
-             <a href="#" id="active" class="bt">Profile</a>
+             <a href="/sponsordashboard" id="active" class="bt">Profile</a>
              <a href="#"  class="bt">Campaigns</a>
-             <a href="/adminsearch" class="bt">Find</a>
+             <a href="/sponsorsearch" class="bt">Find</a>
              <a href="#" class="bt">Stats</a>
              <a href="/userlogin" class="bt">Logout</a>
             </div>
           </nav>     
     </header>
-    <div class="greet">Welcome {{msg}}</div>
+    <div class="greet">Welcome {{user}}</div>
     <div class="bd">
       <div class="container">
           
           <div class="campaigns">
               <h3>Active Campaigns:</h3>
-              <div class="campaign">
-                  <div>Campaign 01 | Progress 10%</div>
-                  <button class="button">view</button>
-              </div>
-              <div class="campaign">
-                  <div>Campaign 02 | Progress 40%</div>
-                  <button class="button">view</button>
-              </div>
+            {%if campaigns %}
+              {%for key,values in campaigns.items()%}
+                <div class="item-unique">
+                 <div>{{values[0]}} | {{values[1]}}</div>
+                 <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#staticBackdrop">View</button>      
+          
+                </div>
+              {%endfor%}
+            {%else%}
+                <h6>No Ongoing Campaigns</h6> 
+            {% endif %}
           </div>
           <div class="requests">
               <h3>New Requests:</h3>

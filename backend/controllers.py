@@ -32,14 +32,25 @@ def admindashboard():
     uname = session.get('admin')
     campaigns = fetch_campaigns()
     flagged_campaigns = Campaign_Info.query.filter_by(flagged="YES").all()
-    flagged_list = {campaign.id: [campaign.name, campaign.sponsor_info.user_name] for campaign in flagged_campaigns}
+    flagged_influencers = Influencer_Info.query.filter_by(flagged="YES").all()
+    flagged_sponsors = Sponsor_Info.query.filter_by(flagged="YES").all()
+    flagged_list = {f"campaign_{campaign.id}": ["campaign", campaign.name, campaign.sponsor_info.user_name] for campaign in flagged_campaigns}
+    flagged_list.update({f"influencer_{influencer.id}": ["influencer", influencer.user_name, influencer.platform] for influencer in flagged_influencers})
+    flagged_list.update({f"sponsor_{sponsor.id}": ["sponsor", sponsor.user_name, sponsor.industry] for sponsor in flagged_sponsors})
     return render_template("admindashboard.html", user=uname, campaigns=campaigns, flagged=flagged_list)
 
-# @app.route("/adminsearch")
-# def adminsearch():
-#     if 'admin' not in session:
-#         return redirect(url_for('adminlogin'))
-#     return render_template("adminsearch.html")
+@app.route("/adminsearch", methods=["GET", "POST"])
+def adminsearch():
+    if 'admin' not in session:
+        return redirect(url_for('adminlogin'))
+    Notflagged_campaigns = Campaign_Info.query.filter_by(flagged="NO").all()
+    Notflagged_influencers = Influencer_Info.query.filter_by(flagged="NO").all()
+    Notflagged_sponsors = Sponsor_Info.query.filter_by(flagged="NO").all()
+    Active_list = {f"campaign_{campaign.id}": ["campaign", campaign.name, campaign.sponsor_info.user_name] for campaign in Notflagged_campaigns}
+    Active_list.update({f"influencer_{influencer.id}": ["influencer", influencer.user_name, influencer.platform] for influencer in Notflagged_influencers})
+    Active_list.update({f"sponsor_{sponsor.id}": ["sponsor", sponsor.user_name, sponsor.industry] for sponsor in Notflagged_sponsors})
+    return render_template("adminsearch.html", List=Active_list)
+
 
 
 @app.route("/userlogin",methods=["GET","POST"])
@@ -50,12 +61,50 @@ def userlogin():
         usr1=Influencer_Info.query.filter_by(user_name=uname,password=pwd).first()
         usr2=Sponsor_Info.query.filter_by(user_name=uname,password=pwd).first()
         if usr1:
-            return render_template("influencerdashboard.html",msg=usr1.user_name)
+            session['influencer'] = uname
+            return redirect(url_for('influencerdashboard')) 
         elif usr2:
-            return render_template("sponsordashboard.html",msg=usr2.user_name)
+            session['sponsor'] = uname
+            return redirect(url_for('sponsordashboard')) 
         else:
             return render_template("userlogin.html",msg="Invalid credentials!!")
       return render_template("userlogin.html")
+
+@app.route("/sponsordashboard", methods=["GET", "POST"])
+def sponsordashboard():
+    if 'sponsor' not in session:
+        return redirect(url_for('userlogin'))
+    uname = session.get('sponsor')
+    campaigns = fetch_campaigns()
+    return render_template("sponsordashboard.html",campaigns=campaigns,user=uname)
+
+@app.route("/sponsorsearch", methods=["GET", "POST"])
+def sponsorsearch():
+    if 'sponsor' not in session:
+        return redirect(url_for('userlogin'))
+    Notflagged_campaigns = Campaign_Info.query.filter_by(flagged="NO").all()
+    Notflagged_influencers = Influencer_Info.query.filter_by(flagged="NO").all()
+    Active_list = {f"campaign_{campaign.id}": ["campaign", campaign.name, campaign.sponsor_info.user_name] for campaign in Notflagged_campaigns}
+    Active_list.update({f"influencer_{influencer.id}": ["influencer", influencer.user_name, influencer.platform] for influencer in Notflagged_influencers})
+    return render_template("sponsorsearch.html", List=Active_list)
+
+@app.route("/influencerdashboard", methods=["GET", "POST"])
+def influencerdashboard():
+    if 'influencer' not in session:
+        return redirect(url_for('userlogin'))
+    uname = session.get('influencer')
+    campaigns = fetch_campaigns()
+    return render_template("influencerdashboard.html",campaigns=campaigns,user=uname)
+
+@app.route("/influencersearch", methods=["GET", "POST"])
+def influencersearch():
+    if 'influencer' not in session:
+        return redirect(url_for('userlogin'))
+    Notflagged_campaigns = Campaign_Info.query.filter_by(flagged="NO").all()
+    Notflagged_sponsors = Sponsor_Info.query.filter_by(flagged="NO").all()
+    Active_list = {f"campaign_{campaign.id}": ["campaign", campaign.name, campaign.sponsor_info.user_name] for campaign in Notflagged_campaigns}
+    Active_list.update({f"sponsor_{sponsor.id}": ["sponsor", sponsor.user_name, sponsor.industry] for sponsor in Notflagged_sponsors})
+    return render_template("influencersearch.html", List=Active_list)
 
 #registration
 
@@ -75,7 +124,7 @@ def Sponsorregistration():
             return render_template("Influencerregistration.html",msg="Sorry user already existed!!!")
     return render_template("Sponsorregistration.html")
 
-@app.route("/Influencerrregistration",methods=["GET","POST"])
+@app.route("/Influencerregistration",methods=["GET","POST"])
 def Influencerrregistration():
     if request.method=="POST":
         uname=request.form.get("uname")
@@ -93,8 +142,7 @@ def Influencerrregistration():
      
     return render_template("Influencerregistration.html")
 
-
-   
+  
 def calculate_progress(start_date, end_date):
     start = datetime.strptime(start_date, "%d-%m-%y")
     end = datetime.strptime(end_date, "%d-%m-%y")
@@ -109,15 +157,33 @@ def calculate_progress(start_date, end_date):
         elapsed_duration = (now - start).days
         progress = (elapsed_duration / total_duration) * 100
         return int(progress)  
-    
+
+ #fetching data   
+
 def fetch_campaigns():
     campaigns=Campaign_Info.query.filter_by(flagged="NO").all()
     campaign_list={}
     for campaign in campaigns:
         progress = calculate_progress(campaign.start_date, campaign.end_date)
         if campaign.id not in campaign_list.keys():
-            campaign_list[campaign.id] = [campaign.name, f"Progress {progress}%"]
+            campaign_list[campaign.id] = [campaign.name, f"Progress {progress}%",campaign.description]
     return campaign_list
+
+# def fetch_influencers():
+#     influencers=Influencer_Info.query.filter_by(flagged="NO").all()
+#     influencer_list={}
+#     for influencer in influencers:
+#         if influencer.id not in influencer_list.keys():
+#             influencer_list[influencer.id] = [influencer.user_name,influencer.platform]
+#     return influencer_list
+
+# def fetch_sponsors():
+#     sponsors=Sponsor_Info.query.filter_by(flagged="NO").all()
+#     sponsor_list={}
+#     for sponsor in sponsors:
+#         if sponsor.id not in sponsor_list.keys():
+#             sponsor_list[sponsor.id] = [sponsor.user_name,sponsor.industry]
+#     return sponsor_list
 
 
         
