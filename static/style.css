@@ -244,3 +244,77 @@
     background-color: #76c963;
     border: 1px solid #ddd;
 }    
+
+/* addcampaign: */
+
+#addbt{
+    
+    background-color: #76c963;
+    min-width: 60px;
+    min-height: 40px;
+    margin-left: 200px;
+}
+
+/* List styles */
+.list-group-item {
+    margin: 10px 20px;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.list-group-item h5 {
+    margin: 0 0 10px 0;
+}
+
+.list-group-item p {
+    margin: 0;
+}
+
+/* Modal styles */
+.modal-content {
+    padding: 20px;
+    border-radius: 5px;
+}
+
+.modal-header .btn-close {
+    padding: 0;
+}
+
+.modal-body .form-label {
+    margin-bottom: 5px;
+}
+
+.modal-body .form-control {
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.modal-body .form-control:focus {
+    border-color: #80bdff;
+    outline: 0;
+}
+
+.modal-body button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.modal-body button:hover {
+    background-color: #0056b3;
+}
+
+.modal-body button:focus {
+    outline: none;
+}

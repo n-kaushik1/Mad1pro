@@ -70,6 +70,7 @@ def userlogin():
             return render_template("userlogin.html",msg="Invalid credentials!!")
       return render_template("userlogin.html")
 
+#sponsor_page_activity
 @app.route("/sponsordashboard", methods=["GET", "POST"])
 def sponsordashboard():
     if 'sponsor' not in session:
@@ -88,6 +89,52 @@ def sponsorsearch():
     Active_list.update({f"influencer_{influencer.id}": ["influencer", influencer.user_name, influencer.platform] for influencer in Notflagged_influencers})
     return render_template("sponsorsearch.html", List=Active_list)
 
+@app.route("/sponsorcampaign", methods=["GET", "POST"])
+def sponsorcampaign():
+    if 'sponsor' not in session:
+        return redirect(url_for('userlogin'))
+    uname = session.get('sponsor')
+    sponsor = Sponsor_Info.query.filter_by(user_name=uname).first()
+    campaigns = Campaign_Info.query.filter_by(sponsor_id=sponsor.id, flagged="NO").all()
+    campaign_list = {campaign.id: [campaign.name, campaign.description, f"Progress {calculate_progress(campaign.start_date, campaign.end_date)}%"] for campaign in campaigns}
+    return render_template("sponsorcampaign.html", campaigns=campaign_list, user=uname)
+
+@app.route("/addcampaign", methods=["POST"])
+def addcampaign():
+    if 'sponsor' not in session:
+        return redirect(url_for('userlogin'))
+
+    uname = session.get('sponsor')
+    sponsor = Sponsor_Info.query.filter_by(user_name=uname).first()
+    
+    if request.method == "POST":
+        name = request.form.get("name")
+        description = request.form.get("description")
+        start_date = request.form.get("start_date")
+        end_date = request.form.get("end_date")
+        budget = request.form.get("budget")
+        goals = request.form.get("goals")
+        visibility = request.form.get("visibility")
+        
+        if not all([name, description, start_date, end_date, budget, goals, visibility]):
+            return render_template("sponsorcampaign.html", user=uname, msg="Please fill all fields")
+
+        new_campaign = Campaign_Info(
+            name=name,
+            description=description,
+            start_date=start_date,
+            end_date=end_date,
+            budget=budget,
+            goals=goals,
+            sponsor_id=sponsor.id,
+            visibility=visibility
+        )
+        db.session.add(new_campaign)
+        db.session.commit()
+
+        return redirect(url_for('sponsorcampaign'))
+
+#influencer_page_activity
 @app.route("/influencerdashboard", methods=["GET", "POST"])
 def influencerdashboard():
     if 'influencer' not in session:
