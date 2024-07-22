@@ -49,12 +49,14 @@ class Campaign_Info(db.Model):
 class Adrequest_Info(db.Model):
     __tablename__="adrequest_info"
     id=db.Column(db.Integer,primary_key=True)
+    name=db.Column(db.String,nullable=False)
     messages=db.Column(db.String,nullable=False)
     requirements=db.Column(db.String,nullable=False) 
     payment_amount=db.Column(db.String,nullable=False)
     status=db.Column(db.String,nullable=False,default="Pending")
     campaign_id=db.Column(db.Integer,db.ForeignKey("campaign_info.id"),nullable=False)
-    influencer_id=db.Column(db.Integer,db.ForeignKey("influencer_info.id"),nullable=False)
+    influencer_username=db.Column(db.String,db.ForeignKey("influencer_info.user_name"),nullable=False)
+
 
      
 

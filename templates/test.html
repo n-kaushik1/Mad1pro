@@ -3,84 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/style.css" >
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <title>Admin Dashboard page</title>
+    <title>Admin Dashboard search page</title>
 </head>
 <body>
-    <header>
-        <nav class="navigation">
+    <header>     
+          <nav class="navigationsearch">
             <h1 id="admindash"><b>Admin's Dashboard</b></h1>
             <div id="admin_button">
-                <a href="#" id="active" class="bt">Info</a>
-                <a href="/adminsearch" class="bt">Find</a>
-                <a href="#" class="bt">Stats</a>
-                <a href="/adminlogin" class="bt">Logout</a>
+             <a href="/admindashboard" class="bt">Info</a>
+             <a href="#" id="active" class="bt">Find</a>
+  
+             <a href="#" class="bt">Stats</a>
+             <a href="/userlogin" class="bt">Logout</a>
             </div>
-        </nav>
+          </nav>
     </header>
-    <div class="greet">Welcome Admin-{{user}}</div>
+    <div class="container">
+      <div class="search-filter">
+          <input type="text" placeholder="Search">
+          <button>Filter</button>
+      </div>
+    {% if List%}  
+     {%for key,values in List.items()%}
+     <div class="item">
+        {% if values[0] == "campaign" %}
+          <div>{{ values[1] }} | {{ values[2] }}</div>
+          <div>
+            <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#Modal{{ key }}">View</button>
+              <button class="flag">Flag</button>
 
-    <div class="container-unique">
-        <div class="section-title-unique">Ongoing Campaigns:</div>
-        {% if campaigns %}
-            {% for key, values in campaigns.items() %}
-                <div class="item-unique">
-                    <div>{{ values[0] }} | {{ values[1] }}</div>
-                    <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#viewcampaign{{ key }}">View</button>
-                    <div class="modal fade" id="viewcampaign{{ key }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewcampaignLabel{{ key }}" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="viewcampaignLabel{{ key }}">{{ values[0] }}</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    ...
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <h6>No Ongoing Campaigns</h6>
+  
+          </div>
+        {% elif values[0] == "influencer" %}
+          <div>{{ values[1] }} | {{ values[2] }}</div>
+          <div>
+            <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#Modal{{ key }}">View</button>
+              <button class="flag">Flag</button>
+          </div>
+        {% elif values[0] == "sponsor" %}
+          <div>{{ values[1] }} | {{ values[2] }}</div>
+          <div>
+            <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#Modal{{ key }}">View</button>
+              <button class="flag">Flag</button>
+          </div>
         {% endif %}
-
-        <div class="section-title-unique">Flagged Users/Campaigns:</div>
-        {% if flagged %}
-            {% for key, values in flagged.items() %}
-                <div class="item-unique">
-                    <div>{{ values[1] }} | {{ values[2] }}</div>
-                    <div>
-                        <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#viewflagged{{ key }}">View</button>
-                        <div class="modal fade" id="viewflagged{{ key }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewflaggedLabel{{ key }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="viewflaggedLabel{{ key }}">{{ values[1] }}</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        ...
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="remove-unique">Remove</button>
-                    </div>
+     </div>
+       <!-- Modal for each  item -->
+       <div class="modal fade" id="Modal{{ key }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="flaggedModalLabel{{ key }}" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="flaggedModalLabel{{ key }}">{{ values[1] }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-            {% endfor %}
-        {% else %}
-            <h6>No Flagged Users/Campaigns</h6>
-        {% endif %}
+                <div class="modal-body">
+                    {% if values[0] == "campaign" %}
+                        <p><strong>Name:</strong> {{ values[1] }}</p>
+                        <p><strong>Sponsor:</strong> {{ values[2] }}</p>
+                        <p><strong>Description:</strong> {{ values[3] }}</p>
+                        <p><strong>Start Date:</strong> {{ values[4] }}</p>
+                        <p><strong>End Date:</strong> {{ values[5] }}</p>
+                        <p><strong>Budget:</strong> {{ values[6] }}</p>
+                        <p><strong>Visibility:</strong> {{ values[7] }}</p>
+                        <p><strong>Goals:</strong> {{ values[8] }}</p>
+                    {% elif values[0] == "influencer" %}
+                        <p><strong>User Name:</strong> {{ values[1] }}</p>
+                        <p><strong>Platform:</strong> {{ values[2] }}</p>
+                        <p><strong>Followers:</strong> {{ values[3] }}</p>
+                    {% elif values[0] == "sponsor" %}
+                        <p><strong>User Name:</strong> {{ values[1] }}</p>
+                        <p><strong>Industry:</strong> {{ values[2] }}</p>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
+     {%endfor%}
+    {%else%}
+      <h5>NO data to show</h5>  
+    {%endif%}    
+    </div>
+   
+    
 </body>
 </html>

@@ -3,58 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/style.css" >
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Sponsor Dashboard page</title>
 </head>
 <body>
     <header>     
-          <nav class="navigation">
+        <nav class="navigation">
             <h1 id="admindash"><b>Sponsor's Dashboard</b></h1>
             <div id="admin_button">
-             <a href="/sponsordashboard" id="active" class="bt">Profile</a>
-             <a href="/sponsorcampaign"  class="bt">Campaigns</a>
-             <a href="/sponsorsearch" class="bt">Find</a>
-             <a href="#" class="bt">Stats</a>
-             <a href="/userlogin" class="bt">Logout</a>
+                <a href="/sponsordashboard" id="active" class="bt">Profile</a>
+                <a href="/sponsorcampaign" class="bt">Campaigns</a>
+                <a href="/sponsorsearch" class="bt">Find</a>
+                <a href="#" class="bt">Stats</a>
+                <a href="/userlogin" class="bt">Logout</a>
             </div>
-          </nav>     
+        </nav>     
     </header>
-    <div class="greet">Welcome {{user}}</div>
+    <div class="greet">Welcome {{ user }}</div>
     <div class="bd">
-      <div class="container">
-          
-          <div class="campaigns">
-              <h3>Active Campaigns:</h3>
-            {%if campaigns %}
-              {%for key,values in campaigns.items()%}
-                <div class="item-unique">
-                 <div>{{values[0]}} | {{values[1]}}</div>
-                 <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#staticBackdrop">View</button>      
-          
+        <div class="container">
+            <div class="campaigns">
+                <h3>Active Campaigns:</h3>
+                {% if campaigns %}
+                    {% for key, values in campaigns.items() %}
+                        <div class="item-unique">
+                            <div>{{ values[0] }} | {{ values[1] }}</div>
+                            <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#viewCampaignModal{{ key }}">View</button>
+                        </div>
+                        <!-- View Campaign Modal -->
+                        <div class="modal fade" id="viewCampaignModal{{ key }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewCampaignLabel{{ key }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="viewCampaignLabel{{ key }}">Campaign Details</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><b>Name:</b> {{ values[0] }}</p>
+                                        <p><b>Description:</b> {{ values[1] }}</p>
+                                        <p><b>Start Date:</b> {{ values[2] }}</p>
+                                        <p><b>End Date:</b> {{ values[3] }}</p>
+                                        <p><b>Budget:</b> {{ values[4] }}</p>
+                                        <p><b>Visibility:</b> {{ values[5] }}</p>
+                                        <p><b>Goals:</b> {{ values[6] }}</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <h6>No Ongoing Campaigns</h6> 
+                {% endif %}
+            </div>
+            <div class="requests">
+                <h3>New Requests:</h3>
+                <div class="request">
+                    <div>Campaign 07 | Company 01</div>
+                    <button class="button button-view">view</button>
+                    <button class="button button-accept">accept</button>
+                    <button class="button button-reject">reject</button>
                 </div>
-              {%endfor%}
-            {%else%}
-                <h6>No Ongoing Campaigns</h6> 
-            {% endif %}
-          </div>
-          <div class="requests">
-              <h3>New Requests:</h3>
-              <div class="request">
-                  <div>Campaign 07 | Company 01</div>
-                  <button class="button button-view">view</button>
-                  <button class="button button-accept">accept</button>
-                  <button class="button button-reject">reject</button>
-              </div>
-              <div class="request">
-                  <div>Campaign 05 | Company 01</div>
-                  <button class="button button-view">view</button>
-                  <button class="button button-accept">accept</button>
-                  <button class="button button-reject">reject</button>
-              </div>
-          </div>
-      </div>
-   
+                <div class="request">
+                    <div>Campaign 05 | Company 01</div>
+                    <button class="button button-view">view</button>
+                    <button class="button button-accept">accept</button>
+                    <button class="button button-reject">reject</button>
+                </div>
+            </div>
+        </div>
+    </div>
     
 </body>
 </html>

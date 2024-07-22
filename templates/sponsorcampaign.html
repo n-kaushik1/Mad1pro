@@ -11,31 +11,46 @@
 <body>
     <header>     
           <nav class="navigation">
-            <h1 id="admindash"><b>Sponsor's Dashboard</b></h1>
+            <h1 id="admindash"><b>Sponsor -{{user}}</b></h1>
             <div id="admin_button">
              <a href="/sponsordashboard"  class="bt">Profile</a>
              <a href="/sponsorcampaign" id="active" class="bt">Campaigns</a>
-             <a href="/adminsearch" class="bt">Find</a>
+             <a href="/sponsorsearch" class="bt">Find</a>
              <a href="#" class="bt">Stats</a>
              <a href="/userlogin" class="bt">Logout</a>
             </div>
           </nav>     
     </header>
+    <div class="container">
+      <div class="search-filter">
+          <input type="text" placeholder="Search">
+          <button>Filter</button>
+      </div>
   
       <br>
       {%if campaigns%}
-      <div><h3>Active Campaigns:</h3></div>
+      <div><h3 id="activeh3">Active Campaigns:</h3></div>
       <ul class="list-group">
           {% for id, details in campaigns.items() %}
-              <li class="list-group-item">
-                  <h5>{{ details[0] }}</h5>
-                  <p>{{ details[1] }}</p>
-                  <p>{{ details[2] }}</p>
-              </li>
+              <div class="list-group-item">
+                  <h4>{{ details[0] }}</h4>
+                  <p><b>Description</b> : {{ details[1] }}</p>
+                  <p><b>Progress</b> : {{ details[2] }}</p>
+                  <p><b>Start date</b> : {{ details[3] }}</p>
+                  <p><b>End date</b> : {{ details[4] }}</p>
+                  <p><b>Budget</b> : {{ details[5] }}</p>
+                  <p><b>Goals</b> : {{ details[6] }}</p>
+                  <p><b>Visibility</b> : {{ details[7] }}</p>
+                   <br>
+                  <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editCampaignModal{{ id }}">Edit</button>
+                  <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCampaignModal{{ id }}">Delete Campaign</button>
+
+                  <button type="button" class="btn btn-secondary" id="addbt" ><a class="bt" href="/adsincampaign/{{ id }}">View ads</a></button>
+              </div>
           {% endfor %}
       </ul>
       {%else%}
-        <div><h3 >Add Campaign:</h3></div>
+        <div><h3 id="activeh3" >Add Campaign:</h3></div>
       {%endif%}  
       <br>
       <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#addCampaign" id="addbt">Add</button>
@@ -90,5 +105,81 @@
     </div>
   </div>
 </div>
+
+<!-- Edit Campaign Modal -->
+{% for id, details in campaigns.items() %}
+<div class="modal fade" id="editCampaignModal{{ id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editCampaignLabel{{ id }}" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editCampaignLabel{{ id }}">Edit Campaign</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editCampaignForm{{ id }}" method="POST" action="/editcampaign/{{ id }}">
+          <div class="mb-3">
+            <label for="editCampaignName{{ id }}" class="form-label">Campaign Name</label>
+            <input type="text" class="form-control" id="editCampaignName{{ id }}" name="name" value="{{ details[0] }}" required>
+          </div>
+          <div class="mb-3">
+            <label for="editCampaignDescription{{ id }}" class="form-label">Description</label>
+            <textarea class="form-control" id="editCampaignDescription{{ id }}" name="description" rows="3" required>{{ details[1] }}</textarea>
+          </div>
+          <div class="mb-3">
+            <label for="editStartDate{{ id }}" class="form-label">Start Date (In format dd-mm-yy)</label>
+            <input type="text" class="form-control" id="editStartDate{{ id }}" name="start_date" value="{{ details[3] }}" required>
+          </div>
+          <div class="mb-3">
+            <label for="editEndDate{{ id }}" class="form-label">End Date (In format dd-mm-yy)</label>
+            <input type="text" class="form-control" id="editEndDate{{ id }}" name="end_date" value="{{ details[4] }}" required>
+          </div>
+          <div class="mb-3">
+            <label for="editBudget{{ id }}" class="form-label">Budget</label>
+            <input type="number" class="form-control" id="editBudget{{ id }}" name="budget" value="{{ details[5] }}" required>
+          </div>
+          <div class="mb-3">
+            <label for="editGoals{{ id }}" class="form-label">Goals</label>
+            <textarea class="form-control" id="editGoals{{ id }}" name="goals" rows="3" required>{{ details[6] }}</textarea>
+          </div>
+          <div class="mb-3">
+            <label for="editVisibility{{ id }}" class="form-label">Visibility</label>
+            <select class="form-control" id="editVisibility{{ id }}" name="visibility" required>
+              <option value="public" {% if details[6] == "public" %} selected {% endif %}>Public</option>
+              <option value="private" {% if details[6] == "private" %} selected {% endif %}>Private</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+
+<!-- Delete Campaign Modals -->
+{% for id, details in campaigns.items() %}
+<div class="modal fade" id="deleteCampaignModal{{ id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="deleteCampaignLabel{{ id }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteCampaignLabel{{ id }}">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this campaign?
+            </div>
+            <div class="modal-footer">
+                <form method="POST" action="/deletecampaign/{{ id }}">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
 
     </body>
