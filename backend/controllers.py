@@ -34,7 +34,6 @@ def admindashboard():
     
     # Fetching campaigns
     campaigns = fetch_campaigns()
-    
     # Fetching flagged items
     flagged_campaigns = Campaign_Info.query.filter_by(flagged="YES").all()
     flagged_influencers = Influencer_Info.query.filter_by(flagged="YES").all()
@@ -66,7 +65,9 @@ def admindashboard():
         "admindashboard.html",
         user=uname,
         campaigns=campaigns,
-        flagged=flagged_list
+        flagged=flagged_list,
+      
+        
     )
 
 @app.route('/unflag_item/<item_type>/<int:item_id>', methods=['POST'])
@@ -181,6 +182,8 @@ def sponsordashboard():
     uname = session.get('sponsor')
     sponsor = Sponsor_Info.query.filter_by(user_name=uname).first()
     campaigns = Campaign_Info.query.filter_by(sponsor_id=sponsor.id, flagged="NO").all()
+    for campaign in campaigns:
+        progress = calculate_progress(campaign.start_date, campaign.end_date)
     
     campaign_list = {campaign.id: [
         campaign.name,
@@ -208,7 +211,7 @@ def sponsordashboard():
         'influencer_username': request.influencer_username
     } for request in ad_requests]
     
-    return render_template("sponsordashboard.html", campaigns=campaign_list, user=uname, ad_requests=ad_request_list)
+    return render_template("sponsordashboard.html", campaigns=campaign_list, user=uname, ad_requests=ad_request_list,progress=progress)
 
 @app.route("/accept_request_spon/<int:request_id>", methods=['POST'])
 def accept_request_spon(request_id):
@@ -675,16 +678,7 @@ def calculate_progress(start_date, end_date):
         progress = (elapsed_duration / total_duration) * 100
         return int(progress)  
 
- #fetching data   
 
-# def fetch_campaigns():
-#     campaigns=Campaign_Info.query.filter_by(flagged="NO").all()
-#     campaign_list={}
-#     for campaign in campaigns:
-#         progress = calculate_progress(campaign.start_date, campaign.end_date)
-#         if campaign.id not in campaign_list.keys():
-#             campaign_list[campaign.id] = [campaign.name, f"Progress {progress}%",campaign.description,campaign.start_date,campaign.end_date,campaign.budget]
-#     return campaign_list
 
 def fetch_campaigns():
     campaigns = Campaign_Info.query.filter_by(flagged="NO").all()

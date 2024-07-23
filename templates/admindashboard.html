@@ -27,7 +27,7 @@
         {% if campaigns %}
             {% for key, values in campaigns.items() %}
                 <div class="item-unique">
-                    <div>{{ values['name'] }} | {{ values['description'] }}</div>
+                    <div>{{ values['name'] }} | {{ values['progress'] }}</div>
                     <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#campaignModal{{ key }}">View</button>
                 </div>
                 

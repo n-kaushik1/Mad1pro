@@ -29,7 +29,7 @@
                 {% if campaigns %}
                     {% for key, values in campaigns.items() %}
                         <div class="item-unique">
-                            <div>{{ values[0] }} | {{ values[1] }}</div>
+                            <div>{{ values[0] }} | Progress: {{ progress }}%</div>
                             <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#viewCampaignModal{{ key }}">View</button>
                         </div>
                         <!-- View Campaign Modal -->

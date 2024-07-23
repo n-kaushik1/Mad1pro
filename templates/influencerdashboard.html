@@ -34,7 +34,7 @@
                 {% if campaigns %}
                     {% for campaign in campaigns %}
                         <div class="item-unique">
-                            <div>{{ campaign.name }} | {{ progress }}%</div>
+                            <div>{{ campaign.name }} | Progress: {{ progress }}%</div>
                             <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#Modal{{ campaign.id }}" id="modalinfludashview">View</button>
                         </div>
 
