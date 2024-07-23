@@ -192,19 +192,111 @@ def sponsordashboard():
         campaign.goals
     ] for campaign in campaigns}
     
-    return render_template("sponsordashboard.html", campaigns=campaign_list, user=uname)
+    ad_requests = Adrequest_Info.query.join(Campaign_Info).filter(
+        Campaign_Info.sponsor_id == sponsor.id,
+        Adrequest_Info.ad_status_sponsor == 'Pending'
+    ).all()
+
+    ad_request_list = [{
+        'id': request.id,
+        'name': request.name,
+        'messages': request.messages,
+        'requirements': request.requirements,
+        'payment_amount': request.payment_amount,
+        'ad_staus_sponsor': request.ad_status_sponsor,
+        'campaign_name': Campaign_Info.query.get(request.campaign_id).name,
+        'influencer_username': request.influencer_username
+    } for request in ad_requests]
+    
+    return render_template("sponsordashboard.html", campaigns=campaign_list, user=uname, ad_requests=ad_request_list)
+
+@app.route("/accept_request_spon/<int:request_id>", methods=['POST'])
+def accept_request_spon(request_id):
+    ad_request = Adrequest_Info.query.get_or_404(request_id)
+    ad_request.ad_status_sponsor = 'Accepted'
+    db.session.commit()
+    
+    return redirect(url_for('sponsordashboard'))
+
+@app.route("/reject_request_spon/<int:request_id>", methods=['POST'])
+def reject_request_spon(request_id):
+    ad_request = Adrequest_Info.query.get_or_404(request_id)
+    ad_request.ad_status_sponsor = 'Rejected'
+    db.session.commit()
+    
+    return redirect(url_for('sponsordashboard'))
+
 
 @app.route("/sponsorsearch", methods=["GET", "POST"])
 def sponsorsearch():
     if 'sponsor' not in session:
         return redirect(url_for('userlogin'))
     uname = session.get('sponsor')
-    sponsor = Sponsor_Info.query.filter_by(user_name=uname).first()
-    Notflagged_campaigns = Campaign_Info.query.filter_by(sponsor_id=sponsor.id,flagged="NO").all()
+
+    # Fetching not flagged 
+    Notflagged_campaigns = Campaign_Info.query.filter_by(flagged="NO").all()
     Notflagged_influencers = Influencer_Info.query.filter_by(flagged="NO").all()
-    Active_list = {f"campaign_{campaign.id}": ["campaign", campaign.name, campaign.sponsor_info.user_name] for campaign in Notflagged_campaigns}
-    Active_list.update({f"influencer_{influencer.id}": ["influencer", influencer.user_name, influencer.platform] for influencer in Notflagged_influencers})
-    return render_template("sponsorsearch.html", List=Active_list,user=uname)
+
+    # Create the active list with all information
+    Active_list = {
+        f"campaign_{campaign.id}": [
+            "campaign", 
+            campaign.name, 
+            campaign.sponsor_info.user_name,
+            campaign.description,
+            campaign.start_date,
+            campaign.end_date,
+            campaign.budget,
+            campaign.visibility,
+            campaign.goals
+        ] for campaign in Notflagged_campaigns
+    }
+    
+    Active_list.update({
+        f"influencer_{influencer.id}": [
+            "influencer", 
+            influencer.user_name, 
+            influencer.platform,
+            influencer.Followers,
+            influencer.role
+        ] for influencer in Notflagged_influencers
+    })
+
+    success_message = request.args.get('success_message')
+    return render_template("sponsorsearch.html", List=Active_list, user=uname, success_message=success_message, campaigns=Notflagged_campaigns)
+
+
+
+@app.route("/send_request", methods=["POST"])
+def send_request():
+    if 'sponsor' not in session:
+        return redirect(url_for('userlogin'))
+
+    sponsor_name = session.get('sponsor')
+    influencer_username = request.form['influencer_username']
+    campaign_id = request.form['campaign_id']
+    name = request.form['name']
+    messages = request.form['messages']
+    requirements = request.form['requirements']
+    payment_amount = request.form['payment_amount']
+
+    # Create a new Adrequest_Info entry
+    new_request = Adrequest_Info(
+        name=name,
+        messages=messages,
+        requirements=requirements,
+        payment_amount=payment_amount,
+        campaign_id=campaign_id,
+        influencer_username=influencer_username
+    )
+
+    db.session.add(new_request)
+    db.session.commit()
+
+    success_message = 'Request sent successfully!'
+    return redirect(url_for('sponsorsearch', success_message=success_message))
+
+
 
 @app.route("/sponsorcampaign", methods=["GET", "POST"])
 def sponsorcampaign():
@@ -289,7 +381,8 @@ def deletecampaign(campaign_id):
     
     if not campaign:
         return "Campaign not found or unauthorized", 404
-
+    
+    Adrequest_Info.query.filter_by(campaign_id=campaign.id).delete()
     # Delete the campaign
     db.session.delete(campaign)
     db.session.commit()
@@ -326,8 +419,17 @@ def addad():
 
     if not campaign:
         return "Unauthorized", 403
-    ads = Adrequest_Info.query.filter_by( campaign_id=campaign.id).all()
-    ads_list = {ad.id: [ad.name, ad.messages, ad.requirements, ad.payment_amount, ad.influencer_username, ad.status] for ad in ads}
+
+    # Calculate the total budget of existing ads in the campaign
+    existing_ads = Adrequest_Info.query.filter_by(campaign_id=campaign.id).all()
+    total_ad_budget = sum(float(ad.payment_amount) for ad in existing_ads)
+    new_ad_amount = float(request.form.get("payment_amount"))
+
+    # Check if the new ad will exceed the campaign budget
+    if total_ad_budget + new_ad_amount > float(campaign.budget):
+        ads_list = {ad.id: [ad.name, ad.messages, ad.requirements, ad.payment_amount, ad.influencer_username, ad.status] for ad in existing_ads}
+        return render_template("adsincampaign.html", user=uname, msg="Adding ad of this amount will exceeds campaign budget!!", campaign_id=campaign.id, ads=ads_list)
+
     name = request.form.get("name")
     messages = request.form.get("messages")
     requirements = request.form.get("requirements")
@@ -335,7 +437,8 @@ def addad():
     influencer_username = request.form.get("influencer_username")
 
     if not all([name, messages, requirements, payment_amount, influencer_username]):
-        return render_template("adsincampaign.html", user=uname, msg="Please fill all fields", campaign_id=campaign.id,ads=ads_list)
+        ads_list = {ad.id: [ad.name, ad.messages, ad.requirements, ad.payment_amount, ad.influencer_username, ad.status] for ad in existing_ads}
+        return render_template("adsincampaign.html", user=uname, msg="Please fill all fields", campaign_id=campaign.id, ads=ads_list)
 
     new_ad = Adrequest_Info(
         name=name,
@@ -344,12 +447,14 @@ def addad():
         payment_amount=payment_amount,
         status="Pending",
         campaign_id=campaign.id,
-        influencer_username= influencer_username
+        influencer_username=influencer_username,
+        ad_status_sponsor="Accepted"
     )
     db.session.add(new_ad)
     db.session.commit()
 
-    return redirect(url_for('adsincampaign', campaign_id=campaign.id,ads=ads_list))
+    return redirect(url_for('adsincampaign', campaign_id=campaign.id))
+
 
 @app.route("/editad/<int:ad_id>", methods=["POST"])
 def editad(ad_id):
@@ -359,23 +464,31 @@ def editad(ad_id):
     uname = session.get('sponsor')
     sponsor = Sponsor_Info.query.filter_by(user_name=uname).first()
 
-    if request.method == "POST":
-        ad = Adrequest_Info.query.get_or_404(ad_id)
-        campaign = Campaign_Info.query.get(ad.campaign_id)
+    ad = Adrequest_Info.query.get_or_404(ad_id)
+    campaign = Campaign_Info.query.get(ad.campaign_id)
 
-        if campaign.sponsor_id != sponsor.id:
-            return "Unauthorized", 403
-      
-        
-        ad.name = request.form.get("name")
-        ad.messages = request.form.get("messages")
-        ad.requirements = request.form.get("requirements")
-        ad.payment_amount = request.form.get("payment_amount")
-        ad.influencer_username = request.form.get("influencer_username")
+    if campaign.sponsor_id != sponsor.id:
+        return "Unauthorized", 403
 
-        db.session.commit()
+    # Calculate the total budget of existing ads in the campaign, excluding the ad being edited
+    existing_ads = Adrequest_Info.query.filter_by(campaign_id=campaign.id).all()
+    total_ad_budget = sum(float(ad.payment_amount) for ad in existing_ads) - float(ad.payment_amount)
+    new_ad_amount = float(request.form.get("payment_amount"))
 
-        return redirect(url_for('adsincampaign', campaign_id=campaign.id))
+    # Check if the updated ad budget will exceed the campaign budget
+    if total_ad_budget + new_ad_amount > float(campaign.budget):
+        return "Total ad budget exceeds campaign budget", 400
+
+    ad.name = request.form.get("name")
+    ad.messages = request.form.get("messages")
+    ad.requirements = request.form.get("requirements")
+    ad.payment_amount = request.form.get("payment_amount")
+    ad.influencer_username = request.form.get("influencer_username")
+
+    db.session.commit()
+
+    return redirect(url_for('adsincampaign', campaign_id=campaign.id))
+
     
 @app.route("/deletead/<int:ad_id>", methods=["POST"])
 def deletead(ad_id):
@@ -406,9 +519,53 @@ def deletead(ad_id):
 def influencerdashboard():
     if 'influencer' not in session:
         return redirect(url_for('userlogin'))
+    
     uname = session.get('influencer')
-    campaigns = fetch_campaignspublic()
-    return render_template("influencerdashboard.html",campaigns=campaigns,user=uname)
+    
+    # Fetch campaigns that are not flagged and have accepted ad requests for this influencer
+    campaigns = Campaign_Info.query.join(Adrequest_Info).filter(
+        Campaign_Info.flagged == 'NO',
+        Adrequest_Info.influencer_username == uname,
+        Adrequest_Info.status == 'Accepted'
+    ).all()
+
+    for campaign in campaigns:
+        progress = calculate_progress(campaign.start_date, campaign.end_date)
+
+    # Fetch new ad requests for this influencer
+    new_requests = Adrequest_Info.query.filter(
+        Adrequest_Info.influencer_username == uname,
+        Adrequest_Info.status == 'Pending'
+    ).all()
+
+    return render_template("influencerdashboard.html", campaigns=campaigns, new_requests=new_requests, user=uname,progress=progress)
+
+@app.route("/accept_request/<int:request_id>", methods=["POST"])
+def accept_request(request_id):
+    if 'influencer' not in session:
+        return redirect(url_for('userlogin'))
+
+    request = Adrequest_Info.query.get(request_id)
+    if request:
+        request.status = 'Accepted'
+        db.session.commit()
+
+    return redirect(url_for('influencerdashboard'))
+
+
+@app.route("/reject_request/<int:request_id>", methods=["POST"])
+def reject_request(request_id):
+    if 'influencer' not in session:
+        return redirect(url_for('userlogin'))
+
+    request = Adrequest_Info.query.get(request_id)
+    if request:
+        request.status = 'Rejected'
+        db.session.commit()
+
+    return redirect(url_for('influencerdashboard'))
+
+
 
 @app.route("/influencersearch", methods=["GET", "POST"])
 def influencersearch():
@@ -501,26 +658,23 @@ def fetch_campaigns():
 
 
 
-
-
-
-# def fetch_campaignspublic():
-#     campaigns = Campaign_Info.query.filter_by(flagged="NO", visibility="public").all()
-#     campaign_list = {}
-#     for campaign in campaigns:
-#         progress = calculate_progress(campaign.start_date, campaign.end_date)
-#         if campaign.id not in campaign_list.keys():
-#             campaign_list[campaign.id] = [
-#                 campaign.name,
-#                 campaign.description,
-#                 f"Progress {progress}%",
-#                 campaign.start_date,
-#                 campaign.end_date,
-#                 campaign.budget,
-#                 campaign.visibility,
-#                 campaign.goals
-#             ]
-#     return campaign_list
+def fetch_campaignspublic():
+    campaigns = Campaign_Info.query.filter_by(flagged="NO", visibility="public").all()
+    campaign_list = {}
+    for campaign in campaigns:
+        progress = calculate_progress(campaign.start_date, campaign.end_date)
+        if campaign.id not in campaign_list.keys():
+            campaign_list[campaign.id] = [
+                campaign.name,
+                campaign.description,
+                f"Progress {progress}%",
+                campaign.start_date,
+                campaign.end_date,
+                campaign.budget,
+                campaign.visibility,
+                campaign.goals
+            ]
+    return campaign_list
 
 # def fetch_influencers():
 #     influencers=Influencer_Info.query.filter_by(flagged="NO").all()

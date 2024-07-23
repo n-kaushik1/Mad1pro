@@ -56,6 +56,7 @@ class Adrequest_Info(db.Model):
     status=db.Column(db.String,nullable=False,default="Pending")
     campaign_id=db.Column(db.Integer,db.ForeignKey("campaign_info.id"),nullable=False)
     influencer_username=db.Column(db.String,db.ForeignKey("influencer_info.user_name"),nullable=False)
+    ad_status_sponsor=db.Column(db.String,nullable=False,default="Pending")
 
 
      

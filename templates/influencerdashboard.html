@@ -3,64 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/style.css" >
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Influencer Dashboard page</title>
 </head>
 <body>
-    <header>     
-          <nav class="navigation">
+    <header>
+        <nav class="navigation">
             <h1 id="admindash"><b>Influencer's Dashboard</b></h1>
             <div id="admin_button">
-              <a href="/influencerdashboard" id="active" class="bt">Profile</a>
-             <a href="/influencersearch" class="bt">Find</a>
-             <a href="#" class="bt">Stats</a>
-             <a href="/userlogin" class="bt">Logout</a>
+                <a href="/influencerdashboard" id="active" class="bt">Profile</a>
+                <a href="/influencersearch" class="bt">Find</a>
+                <a href="#" class="bt">Stats</a>
+                <a href="/userlogin" class="bt">Logout</a>
             </div>
-          </nav>     
+        </nav>
     </header>
     
     <div class="bd">
-      <div class="container">
-          <div class="div"><img class="profile-pic" src="/static\img\icon-5359553_640.webp"></div>
-          <div class="user-info">
-              <h2>Welcome {{user}}</h2>
-              <p>Rating: 5</p>
-              <p>Earnings this month: $500</p>
-          </div>
-          <div class="campaigns">
-              <h3>Active Campaigns:</h3>
-            {%if campaigns %}
-                {%for key,values in campaigns.items()%}
-                <div class="item-unique">
-                 <div>{{values[0]}} | {{values[1]}}</div>
-                 <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#staticBackdrop">View</button>      
-          
-                </div>
-                {%endfor%}
-            {%else%}
-                <h6>No Ongoing Campaigns</h6> 
-            {% endif %}
-          </div>
-          <div class="requests">
-              <h3>New Requests:</h3>
-              <div class="request">
-                  <div>Campaign 07 | Company 01</div>
-                  <button class="button button-view">view</button>
-                  <button class="button button-accept">accept</button>
-                  <button class="button button-reject">reject</button>
-              </div>
-              <div class="request">
-                  <div>Campaign 05 | Company 01</div>
-                  <button class="button button-view">view</button>
-                  <button class="button button-accept">accept</button>
-                  <button class="button button-reject">reject</button>
-              </div>
-          </div>
-      </div>
+        <div class="container">
+            <div class="div"><img class="profile-pic" src="/static/img/icon-5359553_640.webp"></div>
+            <div class="user-info">
+                <h2>Welcome {{ user }}</h2>
+                <p>Rating: 5</p>
+                <p>Earnings this month: $500</p>
+            </div>
+            <div class="campaigns">
+                <h3>Active Campaigns:</h3>
+                {% if campaigns %}
+                    {% for campaign in campaigns %}
+                        <div class="item-unique">
+                            <div>{{ campaign.name }} | {{ progress }}%</div>
+                            <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#Modal{{ campaign.id }}" id="modalinfludashview">View</button>
+                        </div>
+
+                        <!-- Modal for each campaign -->
+                        <div class="modal fade" id="Modal{{ campaign.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ModalLabel{{ campaign.id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="ModalLabel{{ campaign.id }}">{{ campaign.name }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>Name:</strong> {{ campaign.name }}</p>
+                                        <p><strong>Sponsor:</strong> {{ campaign.sponsor_info.user_name }}</p>
+                                        <p><strong>Description:</strong> {{ campaign.description }}</p>
+                                        <p><strong>Start Date:</strong> {{ campaign.start_date }}</p>
+                                        <p><strong>End Date:</strong> {{ campaign.end_date }}</p>
+                                        <p><strong>Goals:</strong> {{ campaign.goals }}</p>
+                                        <h4>Ad Requests:</h4>
+                                        {% for ad in campaign.adrequest_info %}
+                                            {% if ad.status == 'Accepted' %}
+                                                <p><strong>Ad Request Name:</strong> {{ ad.name }}</p>
+                                                <p><strong>Messages:</strong> {{ ad.messages }}</p>
+                                                <p><strong>Requirements:</strong> {{ ad.requirements }}</p>
+                                                <p><strong>Payment Amount:</strong> {{ ad.payment_amount }}</p>
+                                                <hr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <h6>No Ongoing Campaigns</h6>
+                {% endif %}
+            </div>
+            <div class="requests">
+                <h3>New Requests:</h3>
+                {% if new_requests %}
+                    {% for request in new_requests %}
+                        <div class="request">
+                            <div>{{ request.name }} | {{ request.campaign_info.sponsor_info.user_name }}</div>
+                            <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#RequestModal{{ request.id }}" id="modalinfludashview">view</button>
+                            <form action="{{ url_for('accept_request', request_id=request.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="button button-accept">accept</button>
+                            </form>
+                            <form action="{{ url_for('reject_request', request_id=request.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="button button-reject">reject</button>
+                            </form>
+                        </div>
+
+                        <!-- Modal for each new request -->
+                        <div class="modal fade" id="RequestModal{{ request.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="RequestModalLabel{{ request.id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="RequestModalLabel{{ request.id }}">{{ request.name }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>Name:</strong> {{ request.name }}</p>
+                                        <p><strong>Messages:</strong> {{ request.messages }}</p>
+                                        <p><strong>Requirements:</strong> {{ request.requirements }}</p>
+                                        <p><strong>Payment Amount:</strong> {{ request.payment_amount }}</p>
+                                        <p><strong>Campaign:</strong> {{ request.campaign_info.name }}</p>
+                                        <p><strong>Sponsor:</strong> {{ request.campaign_info.sponsor_info.user_name }}</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <h6>No New Requests</h6>
+                {% endif %}
+            </div>
+        </div>
     </div>
-        
-   
-    
 </body>
 </html>

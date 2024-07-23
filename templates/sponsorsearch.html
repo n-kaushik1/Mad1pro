@@ -3,52 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/style.css" >
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Sponsor Dashboard page</title>
 </head>
 <body>
-    <header>     
-          <nav class="navigation">
-            <h1 id="admindash"><b>Sponsor -{{user}}</b></h1>
+    <header>
+        <nav class="navigation">
+            <h1 id="admindash"><b>Sponsor - {{user}}</b></h1>
             <div id="admin_button">
-             <a href="/sponsordashboard"  class="bt">Profile</a>
-             <a href="/sponsorcampaign"  class="bt">Campaigns</a>
-             <a href="/sponsorsearch" id="active" class="bt">Find</a>
-             <a href="#" class="bt">Stats</a>
-             <a href="/userlogin" class="bt">Logout</a>
+                <a href="/sponsordashboard" class="bt">Profile</a>
+                <a href="/sponsorcampaign" class="bt">Campaigns</a>
+                <a href="/sponsorsearch" id="active" class="bt">Find</a>
+                <a href="#" class="bt">Stats</a>
+                <a href="/userlogin" class="bt">Logout</a>
             </div>
-          </nav>     
+        </nav>
     </header>
     <div class="container">
         <div class="search-filter">
             <input type="text" placeholder="Search">
             <button>Filter</button>
         </div>
-        
-    {% if List%}  
-    {%for key,values in List.items()%}
-     <div class="item">
-        {% if values[0] == "campaign" %}
-          <div>{{ values[1] }} | {{ values[2] }}</div>
-          <div>
-              <button class="view">View</button>
-              <button class="req">Request</button>
-          </div>
-        {% elif values[0] == "influencer" %}
-          <div>{{ values[1] }} | {{ values[2] }}</div>
-          <div>
-              <button class="view">View</button>
-              <button class="req">Request</button>
-          </div>
-    
-        {% endif %}
-     </div>
-    {%endfor%}
-    {%else%}
-      <h5>NO data to show</h5>  
-    {%endif%}  
-      
-    </div>
 
-  </body>
+        <!-- Display success message if exists -->
+        {% if success_message %}
+        <div class="alert alert-success" role="alert">
+            {{ success_message }}
+        </div>
+        {% endif %}
+        
+        {% if List %}
+        {% for key, values in List.items() %}
+            <div class="item">
+                <div>{{ values[1] }} | {{ values[2] }}</div>
+                <div>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal{{ key }}">View</button>
+                </div>
+            </div>
+            <!-- Modal for each item -->
+            <div class="modal fade" id="Modal{{ key }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ModalLabel{{ key }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="ModalLabel{{ key }}">{{ values[1] }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            {% if values[0] == "campaign" %}
+                                <p><strong>Name:</strong> {{ values[1] }}</p>
+                                <p><strong>Sponsor:</strong> {{ values[2] }}</p>
+                                <p><strong>Description:</strong> {{ values[3] }}</p>
+                                <p><strong>Start Date:</strong> {{ values[4] }}</p>
+                                <p><strong>End Date:</strong> {{ values[5] }}</p>
+                                <p><strong>Budget:</strong> {{ values[6] }}</p>
+                                <p><strong>Visibility:</strong> {{ values[7] }}</p>
+                                <p><strong>Goals:</strong> {{ values[8] }}</p>
+                            {% elif values[0] == "influencer" %}
+                                <p><strong>User Name:</strong> {{ values[1] }}</p>
+                                <p><strong>Platform:</strong> {{ values[2] }}</p>
+                                <p><strong>Followers:</strong> {{ values[3] }}</p>
+                                <form action="{{ url_for('send_request') }}" method="POST" style="display: inline;">
+                                    <input type="hidden" name="influencer_username" value="{{ values[1] }}">
+                                    <div class="mb-3">
+                                        <label for="campaign_id" class="form-label">Select Campaign</label>
+                                        <select class="form-select" id="campaign_id" name="campaign_id" required>
+                                            {% for campaign in campaigns %}
+                                                <option value="{{ campaign.id }}">{{ campaign.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="name" class="form-label">Ad. Request Name</label>
+                                        <input type="text" class="form-control" id="name" name="name" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="messages" class="form-label">Messages</label>
+                                        <textarea class="form-control" id="messages" name="messages" required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="requirements" class="form-label">Requirements</label>
+                                        <textarea class="form-control" id="requirements" name="requirements" required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="payment_amount" class="form-label">Payment Amount</label>
+                                        <input type="number" class="form-control" id="payment_amount" name="payment_amount" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-warning" id="btreq">Request</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h5>No data to show</h5>
+    {% endif %}
+</div>
+</body>
+</html>

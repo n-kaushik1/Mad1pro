@@ -62,21 +62,46 @@
             </div>
             <div class="requests">
                 <h3>New Requests:</h3>
-                <div class="request">
-                    <div>Campaign 07 | Company 01</div>
-                    <button class="button button-view">view</button>
-                    <button class="button button-accept">accept</button>
-                    <button class="button button-reject">reject</button>
-                </div>
-                <div class="request">
-                    <div>Campaign 05 | Company 01</div>
-                    <button class="button button-view">view</button>
-                    <button class="button button-accept">accept</button>
-                    <button class="button button-reject">reject</button>
-                </div>
+                {% if ad_requests %}
+                    {% for request in ad_requests %}
+                        <div class="request">
+                            <div>{{ request.name }} | {{ request.campaign_name }}</div>
+                            <button class="button button-view" data-bs-toggle="modal" data-bs-target="#viewRequestModal{{ request.id }}">view</button>
+                            <form action="/accept_request_spon/{{ request.id }}" method="post" style="display:inline;">
+                                <button type="submit" class="button button-accept">accept</button>
+                            </form>
+                            <form action="/reject_request_spon/{{ request.id }}" method="post" style="display:inline;">
+                                <button type="submit" class="button button-reject">reject</button>
+                            </form>
+                        </div>
+                        <!-- View Request Modal -->
+                        <div class="modal fade" id="viewRequestModal{{ request.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewRequestLabel{{ request.id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="viewRequestLabel{{ request.id }}">Request Details</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><b>Campaign Name:</b> {{ request.campaign_name }}</p>
+                                        <p><b>Influencer:</b> {{ request.influencer_username }}</p>
+                                        <p><b>Message:</b> {{ request.messages }}</p>
+                                        <p><b>Requirements:</b> {{ request.requirements }}</p>
+                                        <p><b>Payment Amount:</b> {{ request.payment_amount }}</p>
+                                        <p><b>Current status:</b> {{ request.ad_staus_sponsor }}</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <h6>No New Requests</h6>
+                {% endif %}
             </div>
         </div>
     </div>
-    
 </body>
 </html>
