@@ -287,7 +287,8 @@ def send_request():
         requirements=requirements,
         payment_amount=payment_amount,
         campaign_id=campaign_id,
-        influencer_username=influencer_username
+        influencer_username=influencer_username,
+        ad_status_sponsor="Accepted"
     )
 
     db.session.add(new_request)
@@ -588,8 +589,8 @@ def influencersearch():
         ]
         for campaign in Notflagged_campaigns
     }
-
-    return render_template("influencersearch.html", List=Active_list)
+    success_message = request.args.get('success_message')
+    return render_template("influencersearch.html", List=Active_list, success_message=success_message)
 
 @app.route("/send_request_influ", methods=["POST"])
 def send_request_influ():
@@ -610,7 +611,8 @@ def send_request_influ():
         requirements=requirements,
         payment_amount=payment_amount,
         campaign_id=campaign_id,
-        influencer_username=influencer_username
+        influencer_username=influencer_username,
+        status="Accepted"
     )
 
     db.session.add(new_request)
