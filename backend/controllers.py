@@ -405,7 +405,10 @@ def adsincampaign(campaign_id):
     ads = Adrequest_Info.query.filter_by( campaign_id=campaign.id).all()
     ads_list = {ad.id: [ad.name, ad.messages, ad.requirements, ad.payment_amount, ad.influencer_username, ad.status] for ad in ads}
 
-    return render_template("adsincampaign.html", ads=ads_list, user=uname, campaign_id=campaign.id)
+    # Fetch available influencers
+    available_influencers = [influencer.user_name for influencer in Influencer_Info.query.all()]
+
+    return render_template("adsincampaign.html", ads=ads_list, user=uname, campaign_id=campaign.id, available_influencers=available_influencers)
 
 @app.route("/addad", methods=["POST"])
 def addad():
@@ -571,9 +574,52 @@ def reject_request(request_id):
 def influencersearch():
     if 'influencer' not in session:
         return redirect(url_for('userlogin'))
-    Notflagged_campaigns = Campaign_Info.query.filter_by(flagged="NO",visibility="public").all()
-    Active_list = {f"campaign_{campaign.id}": ["campaign", campaign.name, campaign.sponsor_info.user_name] for campaign in Notflagged_campaigns}
+
+    Notflagged_campaigns = Campaign_Info.query.filter_by(flagged="NO", visibility="public").all()
+    Active_list = {
+        f"campaign_{campaign.id}": [
+            "campaign", 
+            campaign.name, 
+            campaign.sponsor_info.user_name,
+            campaign.description,
+            campaign.start_date,
+            campaign.end_date,
+            campaign.goals     
+        ]
+        for campaign in Notflagged_campaigns
+    }
+
     return render_template("influencersearch.html", List=Active_list)
+
+@app.route("/send_request_influ", methods=["POST"])
+def send_request_influ():
+    if 'influencer' not in session:
+        return redirect(url_for('userlogin'))
+
+    influencer_username = session.get('influencer')
+    campaign_id = request.form['campaign_id']
+    name = request.form['name']
+    messages = request.form['messages']
+    requirements = request.form['requirements']
+    payment_amount = request.form['payment_amount']
+
+    # Create a new Adrequest_Info entry
+    new_request = Adrequest_Info(
+        name=name,
+        messages=messages,
+        requirements=requirements,
+        payment_amount=payment_amount,
+        campaign_id=campaign_id,
+        influencer_username=influencer_username
+    )
+
+    db.session.add(new_request)
+    db.session.commit()
+
+    success_message = 'Request sent successfully!'
+    return redirect(url_for('influencersearch', success_message=success_message))
+
+
 
 #registration
 

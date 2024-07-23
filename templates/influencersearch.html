@@ -3,21 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/static/style.css" >
+    <link rel="stylesheet" href="/static/style.css">
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Bootstrap JavaScript Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <title>Influencer Dashboard page</title>
 </head>
 <body>
     <header>     
-          <nav class="navigation">
+        <nav class="navigation">
             <h1 id="admindash"><b>Influencer's Dashboard</b></h1>
             <div id="admin_button">
-              <a href="/influencerdashboard" class="bt">Profile</a>
-             <a href="/influencersearch" id="active" class="bt">Find</a>
-             <a href="#" class="bt">Stats</a>
-             <a href="/userlogin" class="bt">Logout</a>
+                <a href="/influencerdashboard" class="bt">Profile</a>
+                <a href="/influencersearch" id="active" class="bt">Find</a>
+                <a href="#" class="bt">Stats</a>
+                <a href="/userlogin" class="bt">Logout</a>
             </div>
-          </nav>     
+        </nav>     
     </header>
     <div class="container">
         <div class="search-filter">
@@ -25,30 +28,82 @@
             <button>Filter</button>
         </div>
         
-        {% if List%}  
-        {%for key,values in List.items()%}
+        {% if List %}  
+        {% for key, values in List.items() %}
         <div class="item">
             {% if values[0] == "campaign" %}
-             <div>{{ values[1] }} | {{ values[2] }}</div>
-             <div>
-                 <button class="view">View</button>
-                 <button class="req">Request</button>
-             </div>
-           
-            {% elif values[0] == "sponsor" %}
-             <div>{{ values[1] }} | {{ values[2] }}</div>
-             <div>
-                 <button class="view">View</button>
-                 <button class="req">Request</button>
-             </div>
+            <div>{{ values[1] }} | {{ values[2] }}</div>
+            <div>
+                <!-- View Button -->
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#campaignModal{{ key }}">View</button>
+                <!-- Request Button -->
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#requestModal{{ key }}">Request</button>
+            </div>
+
+            <!-- Modal for View -->
+            <div class="modal fade" id="campaignModal{{ key }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="campaignModalLabel{{ key }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="campaignModalLabel{{ key }}">{{ values[1] }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p><strong>Description:</strong> {{ values[2] }}</p>
+                            <p><strong>Start date:</strong> {{ values[3] }}</p>
+                            <p><strong>End date:</strong> {{ values[4] }}</p>
+                            <p><strong>Goals:</strong> {{ values[5] }}</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal for Request -->
+            <div class="modal fade" id="requestModal{{ key }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="requestModalLabel{{ key }}" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="requestModalLabel{{ key }}">Request Ad</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form action="{{ url_for('send_request_influ') }}" method="POST">
+                                <input type="hidden" name="campaign_id" value="{{ key.split('_')[1]|int }}">
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Request Name</label>
+                                    <input type="text" class="form-control" id="name" name="name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="messages" class="form-label">Messages</label>
+                                    <textarea class="form-control" id="messages" name="messages" rows="3" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="requirements" class="form-label">Requirements</label>
+                                    <textarea class="form-control" id="requirements" name="requirements" rows="3" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="payment_amount" class="form-label">Payment Amount</label>
+                                    <input type="text" class="form-control" id="payment_amount" name="payment_amount" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit Request</button>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             {% endif %}
         </div>
-        {%endfor%}
-        {%else%}
-         <h5>NO data to show</h5>  
-        {%endif%}   
-         
-       </div>
-     
-      
-  </body>
+        {% endfor %}
+        {% else %}
+        <h5>NO data to show</h5>  
+        {% endif %}   
+    </div>
+</body>
+</html>
