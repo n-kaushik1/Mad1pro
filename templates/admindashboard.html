@@ -47,6 +47,20 @@
                                 <p><strong>Visibility:</strong> {{ values['visibility'] }}</p>
                                 <p><strong>Goals:</strong> {{ values['goals'] }}</p>
                                 <p><strong>Sponsor:</strong> {{ values['sponsor_name'] }}</p>
+                                <p><strong>Niche:</strong> {{ values['niche'] }}</p>
+                                <hr>
+                                <hr>
+                                <h4>Ad Requests:</h4>
+                                
+                                {% for ad in values['ad_requests'] %}
+                                   <p><strong>Ad Request Name:</strong> {{ ad.name }}</p>
+                                   <p><strong>Messages:</strong> {{ ad.messages }}</p>
+                                   <p><strong>Requirements:</strong> {{ ad.requirements }}</p>
+                                   <p><strong>Payment Amount:</strong> {{ ad.payment_amount }}</p>
+                                   <p><strong>Status from Influencer:</strong> {{ ad.status }}</p>
+                                   <p><strong>Status from Sponsor:</strong> {{ ad.ad_status_sponsor }}</p>
+                                   <hr>
+                                {% endfor %}
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

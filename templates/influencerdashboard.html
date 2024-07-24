@@ -34,7 +34,7 @@
                 {% if campaigns %}
                     {% for campaign in campaigns %}
                         <div class="item-unique">
-                            <div>{{ campaign.name }} | Progress: {{ progress }}%</div>
+                            <div>{{ campaign.name }} | Progress: {{ progress_dict[campaign.id] }}%</div>
                             <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#Modal{{ campaign.id }}" id="modalinfludashview">View</button>
                         </div>
 
@@ -53,6 +53,7 @@
                                         <p><strong>Start Date:</strong> {{ campaign.start_date }}</p>
                                         <p><strong>End Date:</strong> {{ campaign.end_date }}</p>
                                         <p><strong>Goals:</strong> {{ campaign.goals }}</p>
+                                        <p><strong>Niche:</strong> {{ campaign.niche }}</p>
                                         <h4>Ad Requests:</h4>
                                         {% for ad in campaign.adrequest_info %}
                                             {% if ad.status == 'Accepted' %}

@@ -41,6 +41,7 @@
                   <p><b>Budget</b> : {{ details[5] }}</p>
                   <p><b>Goals</b> : {{ details[6] }}</p>
                   <p><b>Visibility</b> : {{ details[7] }}</p>
+                  <p><b>Niche</b> : {{ details[8] }}</p>
                    <br>
                   <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#editCampaignModal{{ id }}">Edit</button>
                   <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteCampaignModal{{ id }}">Delete Campaign</button>
@@ -88,6 +89,10 @@
           <div class="mb-3">
             <label for="goals" class="form-label">Goals</label>
             <textarea class="form-control" id="goals" name="goals" rows="3" required></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="niche" class="form-label">Niche</label>
+            <textarea class="form-control" id="niche" name="niche" rows="1" required></textarea>
           </div>
           <div class="mb-3">
             <label for="visibility" class="form-label">Visibility</label>
@@ -140,6 +145,10 @@
           <div class="mb-3">
             <label for="editGoals{{ id }}" class="form-label">Goals</label>
             <textarea class="form-control" id="editGoals{{ id }}" name="goals" rows="3" required>{{ details[6] }}</textarea>
+          </div>
+          <div class="mb-3">
+            <label for="editniche{{ id }}" class="form-label">Niche</label>
+            <textarea class="form-control" id="editniche{{ id }}" name="niche" rows="1" required>{{ details[8] }}</textarea>
           </div>
           <div class="mb-3">
             <label for="editVisibility{{ id }}" class="form-label">Visibility</label>

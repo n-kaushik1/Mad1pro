@@ -42,6 +42,7 @@ class Campaign_Info(db.Model):
     budget=db.Column(db.String,nullable=False)
     visibility=db.Column(db.String,nullable=False,default="private")
     goals=db.Column(db.String,nullable=False)
+    niche=db.Column(db.String,nullable=False,default="Not specific")
     sponsor_id=db.Column(db.Integer,db.ForeignKey("sponsor_info.id"),nullable=False)
     adrequest_info=db.relationship("Adrequest_Info",backref="campaign_info")
     flagged=db.Column(db.String,nullable=False,default="NO")     
