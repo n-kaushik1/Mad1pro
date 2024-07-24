@@ -362,3 +362,16 @@
     border: white;
     border-radius: 4px;
 }
+
+ /* admin_stats */
+
+.chart-container {
+    width: 100%;
+    max-width: 600px; /* Maximum width of the chart */
+    margin: 0 auto; /* Center the chart */
+}
+
+.chart-canvas {
+    width: 100% !important; /* Make canvas take up the full width of the container */
+    height: 400px !important; /* Set the height of the chart */
+}

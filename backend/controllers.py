@@ -167,6 +167,35 @@ def adminsearch():
     
     return render_template("adminsearch.html", List=Active_list)
 
+@app.route("/adminstats", methods=["GET"])
+def adminstats():
+    if 'admin' not in session:
+        return redirect(url_for('adminlogin'))
+    
+    total_campaigns = Campaign_Info.query.count()
+    total_influencers = Influencer_Info.query.count()
+    total_sponsors = Sponsor_Info.query.count()
+    total_ad_requests = Adrequest_Info.query.count()
+    
+    flagged_campaigns_count = Campaign_Info.query.filter_by(flagged="YES").count()
+    flagged_influencers_count = Influencer_Info.query.filter_by(flagged="YES").count()
+    flagged_sponsors_count = Sponsor_Info.query.filter_by(flagged="YES").count()
+    
+    active_campaigns_count = Campaign_Info.query.filter(Campaign_Info.end_date >= datetime.today().strftime('%Y-%m-%d')).count()
+    completed_campaigns_count = Campaign_Info.query.filter(Campaign_Info.end_date < datetime.today().strftime('%Y-%m-%d')).count()
+
+    return render_template(
+        "adminstats.html",
+        total_campaigns=total_campaigns,
+        total_influencers=total_influencers,
+        total_sponsors=total_sponsors,
+        total_ad_requests=total_ad_requests,
+        flagged_campaigns_count=flagged_campaigns_count,
+        flagged_influencers_count=flagged_influencers_count,
+        flagged_sponsors_count=flagged_sponsors_count,
+        active_campaigns_count=active_campaigns_count,
+        completed_campaigns_count=completed_campaigns_count
+    )
 
 
 
@@ -228,6 +257,22 @@ def sponsordashboard():
     
     return render_template("sponsordashboard.html", campaigns=campaign_list, user=uname, ad_requests=ad_request_list,progress=progress)
 
+@app.route("/sponsorstats")
+def sponsorstats():
+    if 'sponsor' not in session:
+        return redirect(url_for('userlogin'))
+    
+    uname = session.get('sponsor')
+    sponsor = Sponsor_Info.query.filter_by(user_name=uname).first()
+
+    active_campaigns_count = Campaign_Info.query.filter(Campaign_Info.end_date >= datetime.today().strftime('%Y-%m-%d')).count()
+    completed_campaigns_count = Campaign_Info.query.filter(Campaign_Info.end_date < datetime.today().strftime('%Y-%m-%d')).count()
+
+    return render_template("sponsorstats.html", 
+                           active_campaigns_count=active_campaigns_count, 
+                           completed_campaigns_count=completed_campaigns_count, 
+                           user=uname)
+
 @app.route("/accept_request_spon/<int:request_id>", methods=['POST'])
 def accept_request_spon(request_id):
     ad_request = Adrequest_Info.query.get_or_404(request_id)
@@ -251,9 +296,32 @@ def sponsorsearch():
         return redirect(url_for('userlogin'))
     uname = session.get('sponsor')
 
-    # Fetching not flagged 
+    query = request.args.get('query', '')
+    niche = request.args.get('niche', '')
+    min_followers = request.args.get('min_followers', 0, type=int)
+    max_followers = request.args.get('max_followers', float('inf'), type=int)
+
+    # Fetching not flagged campaigns
     Notflagged_campaigns = Campaign_Info.query.filter_by(flagged="NO").all()
-    Notflagged_influencers = Influencer_Info.query.filter_by(flagged="NO").all()
+
+    # Fetching not flagged influencers and applying filters
+    influencers_query = Influencer_Info.query.filter_by(flagged="NO")
+
+    if query:
+        influencers_query = influencers_query.filter(
+            Influencer_Info.user_name.ilike(f'%{query}%') | 
+            Influencer_Info.platform.ilike(f'%{query}%')
+        )
+    
+    if niche:
+        influencers_query = influencers_query.filter_by(role=niche)
+    
+    influencers_query = influencers_query.filter(
+        Influencer_Info.Followers >= min_followers,
+        Influencer_Info.Followers <= max_followers
+    )
+
+    Notflagged_influencers = influencers_query.all()
 
     # Create the active list with all information
     Active_list = {
@@ -283,6 +351,7 @@ def sponsorsearch():
 
     success_message = request.args.get('success_message')
     return render_template("sponsorsearch.html", List=Active_list, user=uname, success_message=success_message, campaigns=Notflagged_campaigns)
+
 
 
 
@@ -591,6 +660,33 @@ def reject_request(request_id):
         db.session.commit()
 
     return redirect(url_for('influencerdashboard'))
+
+@app.route("/influencerstats")
+def influencerstats():
+    if 'influencer' not in session:
+        return redirect(url_for('userlogin'))
+    
+    uname = session.get('influencer')
+    
+    accepted_requests_count = Adrequest_Info.query.filter_by(influencer_username=uname, status="Accepted").count()
+    pending_requests_count = Adrequest_Info.query.filter_by(influencer_username=uname, status="Pending").count()
+    completed_requests_count = Adrequest_Info.query.filter_by(influencer_username=uname, status="Completed").count()
+    
+    total_campaigns_count = Campaign_Info.query.join(Adrequest_Info).filter(
+        Adrequest_Info.influencer_username == uname
+    ).count()
+    
+    average_payment_amount = db.session.query(db.func.avg(Adrequest_Info.payment_amount)).filter(
+        Adrequest_Info.influencer_username == uname
+    ).scalar()
+    
+    return render_template("influencerstats.html", 
+                           accepted_requests_count=accepted_requests_count, 
+                           pending_requests_count=pending_requests_count, 
+                           completed_requests_count=completed_requests_count,
+                           total_campaigns_count=total_campaigns_count,
+                           average_payment_amount=average_payment_amount,
+                           user=uname)
 
 
 

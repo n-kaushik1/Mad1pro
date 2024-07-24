@@ -16,18 +16,29 @@
                 <a href="/sponsordashboard" class="bt">Profile</a>
                 <a href="/sponsorcampaign" class="bt">Campaigns</a>
                 <a href="/sponsorsearch" id="active" class="bt">Find</a>
-                <a href="#" class="bt">Stats</a>
+                <a href="/sponsorstats" class="bt">Stats</a>
                 <a href="/userlogin" class="bt">Logout</a>
             </div>
         </nav>
     </header>
     <div class="container">
         <div class="search-filter">
-            <input type="text" placeholder="Search">
-            <button>Filter</button>
+            <form method="GET" action="/sponsorsearch" id="search-form">
+                <input type="text" name="query" placeholder="Search by name">
+                <select name="niche">
+                    <option value="">Select Niche</option>
+                    <option value="fashion">Tech</option>
+                    <option value="tech">Tech</option>
+                    <option value="food">Food</option>
+                    <!-- Add more options as needed -->
+                </select>
+                <input type="number" name="min_followers" placeholder="Min Followers">
+                <input type="number" name="max_followers" placeholder="Max Followers">
+                <button type="submit">Filter</button>
+            </form>
         </div>
 
-        <!-- Display success message if exists -->
+        <!-- Display success message here if it exists -->
         {% if success_message %}
         <div class="alert alert-success" role="alert">
             {{ success_message }}

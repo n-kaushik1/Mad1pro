@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Admin Stats</title>
+</head>
+<body >
+    <header>
+        <nav class="navigation">
+            <h1 id="admindash"><b>Admin's Dashboard</b></h1>
+            <div id="admin_button">
+                <a href="/admindashboard" class="bt">Info</a>
+                <a href="/adminsearch" class="bt">Find</a>
+                <a href="/adminstats" class="bt" id="active">Stats</a>
+                <a href="/adminlogin" class="bt">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="chart-container">
+        <div class="section-title-unique">Admin Statistics</div>
+        <canvas id="campaignChart" class="chart-canvas" ></canvas>
+        <br>
+        <canvas id="flaggedChart" class="chart-canvas" ></canvas>
+        <br><hr>
+        <canvas id="statusChart"  ></canvas>
+    </div>
+
+    <script>
+        const campaignData = {
+            labels: ['Total Campaigns', 'Total Influencers', 'Total Sponsors', 'Total Ad Requests'],
+            datasets: [{
+                label: 'Count',
+                data: [{{ total_campaigns }}, {{ total_influencers }}, {{ total_sponsors }}, {{ total_ad_requests }}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        const flaggedData = {
+            labels: ['Flagged Campaigns', 'Flagged Influencers', 'Flagged Sponsors'],
+            datasets: [{
+                label: 'Count',
+                data: [{{ flagged_campaigns_count }}, {{ flagged_influencers_count }}, {{ flagged_sponsors_count }}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        const statusData = {
+            labels: ['Active Campaigns', 'Completed Campaigns'],
+            datasets: [{
+                label: 'Count',
+                data: [{{ active_campaigns_count }}, {{ completed_campaigns_count }}],
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)'
+                ],
+                borderWidth: 1
+            }]
+        };
+
+        const configCampaign = {
+            type: 'bar',
+            data: campaignData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        const configFlagged = {
+            type: 'bar',
+            data: flaggedData,
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        const configStatus = {
+            type: 'pie',
+            data: statusData,
+            options: {
+                responsive: true
+            }
+        };
+
+        new Chart(document.getElementById('campaignChart'), configCampaign);
+        new Chart(document.getElementById('flaggedChart'), configFlagged);
+        new Chart(document.getElementById('statusChart'), configStatus);
+    </script>
+</body>
+</html>

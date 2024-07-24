@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Sponsor Stats</title>
+</head>
+<body>
+    <header>
+        <nav class="navigation">
+            <h1 id="admindash"><b>Sponsor's Dashboard</b></h1>
+            <div id="admin_button">
+                <a href="/sponsordashboard"  class="bt">Profile</a>
+                <a href="/sponsorcampaign" class="bt">Campaigns</a>
+                <a href="/sponsorsearch" class="bt">Find</a>
+                <a href="/sponsorstats" class="bt" id="active">Stats</a>
+                <a href="/userlogin" class="bt">Logout</a>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div class="chart-container">
+            <canvas id="statusChart" width="400" height="400"></canvas>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            const statusData = {
+                labels: ['Active Campaigns', 'Completed Campaigns'],
+                datasets: [{
+                    label: 'Count',
+                    data: [{{ active_campaigns_count }}, {{ completed_campaigns_count }}],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            const statusChart = new Chart(ctx, {
+                type: 'bar',
+                data: statusData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

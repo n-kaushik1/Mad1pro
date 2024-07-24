@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Influencer Stats</title>
+    <title>Influencer Dashboard page</title>
+</head>
+<body>
+    <header>
+        <nav class="navigation">
+            <h1 id="admindash"><b>Influencer's Stats</b></h1>
+            <div id="admin_button">
+                <a href="/influencerdashboard"  class="bt">Profile</a>
+                <a href="/influencersearch" class="bt">Find</a>
+                <a href="/influencerstats" class="bt" id="active">Stats</a>
+                <a href="/userlogin" class="bt">Logout</a>
+            </div>
+        </nav>
+    </header>
+    <main>
+        <div class="chart-container">
+            <div class="row">
+                <div class="col-md-6">
+                    <canvas id="requestChart" width="400" height="400"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <canvas id="campaignChart" width="400" height="400"></canvas>
+                </div>
+            </div>
+            <div class="row mt-5">
+                <div class="col-md-6">
+                    <canvas id="averagePaymentChart" width="400" height="400"></canvas>
+                </div>
+                <div class="col-md-6">
+                    <canvas id="completedRequestsChart" width="400" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const requestCtx = document.getElementById('requestChart').getContext('2d');
+            const requestData = {
+                labels: ['Accepted Requests', 'Pending Requests'],
+                datasets: [{
+                    label: 'Count',
+                    data: [{{ accepted_requests_count }}, {{ pending_requests_count }}],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            const requestChart = new Chart(requestCtx, {
+                type: 'bar',
+                data: requestData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            const campaignCtx = document.getElementById('campaignChart').getContext('2d');
+            const campaignData = {
+                labels: ['Total Campaigns'],
+                datasets: [{
+                    label: 'Count',
+                    data: [{{ total_campaigns_count }}],
+                    backgroundColor: [
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            const campaignChart = new Chart(campaignCtx, {
+                type: 'bar',
+                data: campaignData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            const averagePaymentCtx = document.getElementById('averagePaymentChart').getContext('2d');
+            const averagePaymentData = {
+                labels: ['Average Payment Amount'],
+                datasets: [{
+                    label: 'Amount',
+                    data: [{{ average_payment_amount|default(0)|round(2) }}],
+                    backgroundColor: [
+                        'rgba(255, 206, 86, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 206, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            const averagePaymentChart = new Chart(averagePaymentCtx, {
+                type: 'bar',
+                data: averagePaymentData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            const completedRequestsCtx = document.getElementById('completedRequestsChart').getContext('2d');
+            const completedRequestsData = {
+                labels: ['Completed Requests'],
+                datasets: [{
+                    label: 'Count',
+                    data: [{{ completed_requests_count }}],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            const completedRequestsChart = new Chart(completedRequestsCtx, {
+                type: 'bar',
+                data: completedRequestsData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
