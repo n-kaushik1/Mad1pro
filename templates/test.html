@@ -1,3 +1,12 @@
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,129 +15,164 @@
     <link rel="stylesheet" href="/static/style.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <title>Admin Dashboard page</title>
+    <title>Influencer Dashboard page</title>
 </head>
-<body >
+<body>
     <header>
         <nav class="navigation">
-            <h1 id="admindash"><b>Admin's Dashboard</b></h1>
+            <h1 id="admindash"><b>Influencer's Dashboard</b></h1>
             <div id="admin_button">
-                <a href="#" id="active" class="bt">Info</a>
-                <a href="/adminsearch" class="bt">Find</a>
-                <a href="#" class="bt">Stats</a>
-                <a href="/adminlogin" class="bt">Logout</a>
+                <a href="/influencerdashboard" id="active" class="bt">Profile</a>
+                <a href="/influencersearch" class="bt">Find</a>
+                <a href="/influencerstats" class="bt">Stats</a>
+                <a href="/userlogin" class="bt">Logout</a>
             </div>
         </nav>
     </header>
-    <div class="greet">Welcome Admin-{{user}}</div>
+    
+    <div class="bd">
+        <div class="container">
+            <div class="div"><img class="profile-pic" src="/static/img/icon-5359553_640.webp" alt="Profile Picture"></div>
+            <div class="user-info">
+                <h2>Welcome {{ user }}</h2>
+                <p>Rating: 5</p>
+                <p>Earnings this month: $500</p>
+                <br>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editprofileModal">Edit profile</button>
+            </div>
+            <div class="campaigns">
+                <h3>Active Campaigns:</h3>
+                {% if campaigns %}
+                    {% for campaign in campaigns %}
+                        <div class="item-unique">
+                            <div>{{ campaign.name }} | Progress: {{ progress_dict[campaign.id] }}%</div>
+                            <button type="button" class="view-unique btn btn-secondary" data-bs-toggle="modal" data-bs-target="#Modal{{ campaign.id }}" id="modalinfludashview">View</button>
+                        </div>
 
-    <div class="container-unique">
-        <div class="section-title-unique">Ongoing Campaigns:</div>
-        {% if campaigns %}
-            {% for key, values in campaigns.items() %}
-                <div class="item-unique">
-                    <div>{{ values['name'] }} | {{ values['progress'] }}</div>
-                    <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#campaignModal{{ key }}">View</button>
-                </div>
-                
-                <!-- Modal for each campaign -->
-                <div class="modal fade" id="campaignModal{{ key }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="campaignModalLabel{{ key }}" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="campaignModalLabel{{ key }}">{{ values['name'] }}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p><strong>Description:</strong> {{ values['description'] }}</p>
-                                <p><strong>Start Date:</strong> {{ values['start_date'] }}</p>
-                                <p><strong>End Date:</strong> {{ values['end_date'] }}</p>
-                                <p><strong>Budget:</strong> {{ values['budget'] }}</p>
-                                <p><strong>Visibility:</strong> {{ values['visibility'] }}</p>
-                                <p><strong>Goals:</strong> {{ values['goals'] }}</p>
-                                <p><strong>Sponsor:</strong> {{ values['sponsor_name'] }}</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <!-- Modal for each campaign -->
+                        <div class="modal fade" id="Modal{{ campaign.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ModalLabel{{ campaign.id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="ModalLabel{{ campaign.id }}">{{ campaign.name }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>Name:</strong> {{ campaign.name }}</p>
+                                        <p><strong>Sponsor:</strong> {{ campaign.sponsor_info.user_name }}</p>
+                                        <p><strong>Description:</strong> {{ campaign.description }}</p>
+                                        <p><strong>Start Date:</strong> {{ campaign.start_date }}</p>
+                                        <p><strong>End Date:</strong> {{ campaign.end_date }}</p>
+                                        <p><strong>Goals:</strong> {{ campaign.goals }}</p>
+                                        <p><strong>Niche:</strong> {{ campaign.niche }}</p>
+                                        <h4>Ad Requests:</h4>
+                                        {% for ad in campaign.adrequest_info %}
+                                            {% if ad.status == 'Accepted' %}
+                                                <p><strong>Ad Request Name:</strong> {{ ad.name }}</p>
+                                                <p><strong>Messages:</strong> {{ ad.messages }}</p>
+                                                <p><strong>Requirements:</strong> {{ ad.requirements }}</p>
+                                                <p><strong>Payment Amount:</strong> {{ ad.payment_amount }}</p>
+                                                <hr>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            {% endfor %}
-        {% else %}
-            <h6>No Ongoing Campaigns</h6>
-        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <h6>No Ongoing Campaigns</h6>
+                {% endif %}
+            </div>
+            <div class="requests">
+                <h3>New Requests:</h3>
+                {% if new_requests %}
+                    {% for request in new_requests %}
+                        <div class="request">
+                            <div>{{ request.name }} | {{ request.campaign_info.sponsor_info.user_name }}</div>
+                            <button type="button" class="view-unique btn btn-secondary" data-bs-toggle="modal" data-bs-target="#RequestModal{{ request.id }}" id="modalinfludashview">View</button>
+                            <form action="{{ url_for('accept_request', request_id=request.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="button button-accept btn btn-success">Accept</button>
+                            </form>
+                            <form action="{{ url_for('reject_request', request_id=request.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="button button-reject btn btn-danger">Reject</button>
+                            </form>
+                        </div>
+
+                        <!-- Modal for each new request -->
+                        <div class="modal fade" id="RequestModal{{ request.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="RequestModalLabel{{ request.id }}" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="RequestModalLabel{{ request.id }}">{{ request.name }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p><strong>Name:</strong> {{ request.name }}</p>
+                                        <p><strong>Messages:</strong> {{ request.messages }}</p>
+                                        <p><strong>Requirements:</strong> {{ request.requirements }}</p>
+                                        <p><strong>Payment Amount:</strong> {{ request.payment_amount }}</p>
+                                        <p><strong>Campaign:</strong> {{ request.campaign_info.name }}</p>
+                                        <p><strong>Sponsor:</strong> {{ request.campaign_info.sponsor_info.user_name }}</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <h6>No New Requests</h6>
+                {% endif %}
+            </div>
+        </div>
     </div>
 
-    <div class="container-unique">
-        <div class="section-title-unique">Flagged Users/Campaigns:</div>
-        {% if flagged %}
-            {% for key, values in flagged.items() %}
-                <div class="item-unique">
-                    {% if values[0] == "campaign" %}
-                        <div>{{ values[1] }} | {{ values[2] }}</div>
-                        <div>
-                            <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#flaggedModal{{ key }}">View</button>
-                            <form action="{{ url_for('unflag_item', item_type=values[0], item_id=key.split('_')[1]) }}" method="POST" style="display: inline;">
-                              <button type="submit" class="remove-unique">Remove</button>
-                          </form>
-                        </div>
-                    {% elif values[0] == "influencer" %}
-                        <div>{{ values[1] }} | {{ values[2] }}</div>
-                        <div>
-                            <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#flaggedModal{{ key }}">View</button>
-                            <form action="{{ url_for('unflag_item', item_type=values[0], item_id=key.split('_')[1]) }}" method="POST" style="display: inline;">
-                              <button type="submit" class="remove-unique">Remove</button>
-                          </form>
-                        </div>
-                    {% elif values[0] == "sponsor" %}
-                        <div>{{ values[1] }} | {{ values[2] }}</div>
-                        <div>
-                            <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#flaggedModal{{ key }}">View</button>
-                            <form action="{{ url_for('unflag_item', item_type=values[0], item_id=key.split('_')[1]) }}" method="POST" style="display: inline;">
-                              <button type="submit" class="remove-unique">Remove</button>
-                          </form>
-                        </div>
-                    {% endif %}
+
+    <!-- Edit Profile Modal -->
+    {% for id, details in influencer.items() %}
+    <div class="modal fade" id="editprofileModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editprofileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editprofileModalLabel">Edit Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                
-                <!-- Modal for each flagged item -->
-                <div class="modal fade" id="flaggedModal{{ key }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="flaggedModalLabel{{ key }}" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="flaggedModalLabel{{ key }}">{{ values[1] }}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                {% if values[0] == "campaign" %}
-                                    <p><strong>Name:</strong> {{ values[1] }}</p>
-                                    <p><strong>Sponsor:</strong> {{ values[2] }}</p>
-                                    <p><strong>Description:</strong> {{ values[3] }}</p>
-                                    <p><strong>Start Date:</strong> {{ values[4] }}</p>
-                                    <p><strong>End Date:</strong> {{ values[5] }}</p>
-                                    <p><strong>Budget:</strong> {{ values[6] }}</p>
-                                    <p><strong>Visibility:</strong> {{ values[7] }}</p>
-                                    <p><strong>Goals:</strong> {{ values[8] }}</p>
-                                {% elif values[0] == "influencer" %}
-                                    <p><strong>User Name:</strong> {{ values[1] }}</p>
-                                    <p><strong>Platform:</strong> {{ values[2] }}</p>
-                                    <p><strong>Followers:</strong> {{ values[3] }}</p>
-                                {% elif values[0] == "sponsor" %}
-                                    <p><strong>User Name:</strong> {{ values[1] }}</p>
-                                    <p><strong>Industry:</strong> {{ values[2] }}</p>
-                                {% endif %}
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            </div>
+                <div class="modal-body">
+                    <form id="editprofileForm" method="POST" action="/editprofile_influ/{{ id }}">
+                        <div class="mb-3">
+                            <label for="editprofileName{{ id }}" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="editprofileName{{ id }}" name="name" value="{{ details[0] }}" required>
                         </div>
-                    </div>
+                        <div class="mb-3">
+                            <label for="editprofileniche{{ id }}" class="form-label">Niche</label>
+                            <textarea class="form-control" id="editprofileniche{{ id }}" name="niche" rows="1" required>{{ details[1] }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editprofileplatform{{ id }}" class="form-label">Platform</label>
+                            <input type="text" class="form-control" id="editprofileplatform{{ id }}" name="platform" value="{{ details[2] }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editprofilefollowers{{ id }}" class="form-label">Followers</label>
+                            <input type="number" class="form-control" id="editprofilefollowers{{ id }}" name="followers" value="{{ details[3] }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editprofilepassword{{ id }}" class="form-label">Password</label>
+                            <input type="text" class="form-control" id="editprofilepassword{{ id }}" name="password" value="{{ details[4] }}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
                 </div>
-            {% endfor %}
-        {% else %}
-            <h6>No Flagged Users/Campaigns</h6>
-        {% endif %}
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
+    {% endfor %}
 </body>
 </html>

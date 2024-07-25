@@ -28,6 +28,8 @@
                 <h2>Welcome {{ user }}</h2>
                 <p>Rating: 5</p>
                 <p>Earnings this month: $500</p>
+                <br>
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editprofileModal">Edit profile</button>
             </div>
             <div class="campaigns">
                 <h3>Active Campaigns:</h3>
@@ -120,5 +122,48 @@
             </div>
         </div>
     </div>
+
+
+    <!-- Edit Profile Modal -->
+    {% for id, details in influencer.items() %}
+    <div class="modal fade" id="editprofileModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editprofileModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editprofileModalLabel">Edit Profile</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editprofileForm" method="POST" action="/editprofile_influ/{{ id }}">
+                        <div class="mb-3">
+                            <label for="editprofileName{{ id }}" class="form-label">Name</label>
+                            <input type="text" class="form-control" id="editprofileName{{ id }}" name="name" value="{{ details[0] }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editprofileniche{{ id }}" class="form-label">Niche</label>
+                            <textarea class="form-control" id="editprofileniche{{ id }}" name="niche" rows="1" required>{{ details[1] }}</textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editprofileplatform{{ id }}" class="form-label">Platform</label>
+                            <input type="text" class="form-control" id="editprofileplatform{{ id }}" name="platform" value="{{ details[2] }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editprofilefollowers{{ id }}" class="form-label">Followers</label>
+                            <input type="number" class="form-control" id="editprofilefollowers{{ id }}" name="followers" value="{{ details[3] }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editprofilepassword{{ id }}" class="form-label">Password</label>
+                            <input type="text" class="form-control" id="editprofilepassword{{ id }}" name="password" value="{{ details[4] }}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Update</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 </body>
 </html>

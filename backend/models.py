@@ -15,7 +15,8 @@ class Influencer_Info(db.Model):
     password=db.Column(db.String,nullable=False)
     platform=db.Column(db.String,nullable=False)
     Followers=db.Column(db.Integer,nullable=False)
-    role=db.Column(db.Integer,nullable=False,default=1)
+    name=db.Column(db.String,nullable=False)
+    niche=db.Column(db.String,nullable=False)
     adrequest_info=db.relationship("Adrequest_Info",backref="influencer_info")
     flagged=db.Column(db.String,nullable=False,default="NO")     
  
@@ -25,8 +26,8 @@ class Sponsor_Info(db.Model):
       id=db.Column(db.Integer,primary_key=True)
       user_name=db.Column(db.String,unique=True,nullable=False)
       password=db.Column(db.String,nullable=False)
+      name=db.Column(db.String,nullable=False)
       industry=db.Column(db.String,nullable=False)
-      role=db.Column(db.Integer,nullable=False,default=2)
       campaign_info=db.relationship("Campaign_Info",backref="sponsor_info")
       flagged=db.Column(db.String,nullable=False,default="NO")
 

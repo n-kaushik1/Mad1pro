@@ -26,40 +26,40 @@
         <div class="container">
             <div class="campaigns">
                 <h3>Active Campaigns:</h3>
-                {% if campaigns %}
-                    {% for key, values in campaigns.items() %}
-                        <div class="item-unique">
-                            <div>{{ values[0] }} | Progress: {{ progress }}%</div>
-                            <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#viewCampaignModal{{ key }}">View</button>
-                        </div>
-                        <!-- View Campaign Modal -->
-                        <div class="modal fade" id="viewCampaignModal{{ key }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewCampaignLabel{{ key }}" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="viewCampaignLabel{{ key }}">Campaign Details</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p><b>Name:</b> {{ values[0] }}</p>
-                                        <p><b>Description:</b> {{ values[1] }}</p>
-                                        <p><b>Start Date:</b> {{ values[2] }}</p>
-                                        <p><b>End Date:</b> {{ values[3] }}</p>
-                                        <p><b>Budget:</b> {{ values[4] }}</p>
-                                        <p><b>Visibility:</b> {{ values[5] }}</p>
-                                        <p><b>Goals:</b> {{ values[6] }}</p>
-                                        <p><b>Niche:</b> {{ values[7] }}</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    </div>
+            {% if campaigns %}
+                {% for key, values in campaigns.items() %}
+                    <div class="item-unique">
+                        <div>{{ values['name'] }} | Progress: {{ progress_dict[key] }}%</div>
+                        <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#viewCampaignModal{{ key }}">View</button>
+                    </div>
+                    <!-- View Campaign Modal -->
+                    <div class="modal fade" id="viewCampaignModal{{ key }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="viewCampaignLabel{{ key }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="viewCampaignLabel{{ key }}">Campaign Details</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p><b>Name:</b> {{ values['name'] }}</p>
+                                    <p><b>Description:</b> {{ values['description'] }}</p>
+                                    <p><b>Start Date:</b> {{ values['start_date'] }}</p>
+                                    <p><b>End Date:</b> {{ values['end_date'] }}</p>
+                                    <p><b>Budget:</b> {{ values['budget'] }}</p>
+                                    <p><b>Visibility:</b> {{ values['visibility'] }}</p>
+                                    <p><b>Goals:</b> {{ values['goals'] }}</p>
+                                    <p><b>Niche:</b> {{ values['niche'] }}</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
-                    {% endfor %}
-                {% else %}
-                    <h6>No Ongoing Campaigns</h6> 
-                {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <h6>No Ongoing Campaigns</h6> 
+            {% endif %}
             </div>
             <div class="requests">
                 <h3>New Requests:</h3>
