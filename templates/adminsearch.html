@@ -22,65 +22,82 @@
     </header>
     <div class="container">
         <div class="search-filter">
-            <input type="text" placeholder="Search">
-            <button>Filter</button>
+            <form method="GET" action="/adminsearch" id="search-form">
+                <input type="text" name="query" placeholder="Search by name">
+                <select name="niche">
+                    <option value="">Select Niche</option>
+                    <option value="Tech">Tech</option>
+                    <option value="Fashion">Fashion</option>
+                    <option value="Food">Food</option>
+                    <option value="Health and Fitness">Health and Fitness</option>
+                    <option value="Others">Others</option>
+                </select>
+                <input type="number" name="min_followers" placeholder="Min Followers">
+                <button type="submit">Filter</button>
+            </form>
         </div>
         {% if List %}
-            {% for key, values in List.items() %}
-                <div class="item">
-                    <div>{{ values[1] }} | {{ values[2] }}</div>
-                    <div>
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal{{ key }}">View</button>
-                        <form action="{{ url_for('flag_item', item_type=values[0], item_id=key.split('_')[1]) }}" method="POST" style="display: inline;">
-                            <button type="submit" class="btn btn-warning">Flag</button>
-                        </form>
+            {% for category, items in List.items() %}
+                {% for item in items %}
+                    <div class="item">
+                        <div>{{ item.name }} | 
+                            {% if item.type == 'campaign' %}
+                                {{ item.sponsor }}
+                            {% elif item.type == 'influencer' %}
+                                {{ item.platform }}
+                            {% else %}
+                                {{ item.industry }}
+                            {% endif %}
+                        </div>
+                        <div>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#Modal{{ item.type }}{{ item.id }}">View</button>
+                            <form action="{{ url_for('flag_item', item_type=item.type, item_id=item.id) }}" method="POST" style="display: inline;">
+                                <button type="submit" class="btn btn-warning">Flag</button>
+                            </form>
+                        </div>
                     </div>
-                </div>
-                <!-- Modal for each item -->
-                <div class="modal fade" id="Modal{{ key }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ModalLabel{{ key }}" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="ModalLabel{{ key }}">{{ values[1] }}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                {% if values[0] == "campaign" %}
-                                    <p><strong>Name:</strong> {{ values[1] }}</p>
-                                    <p><strong>Sponsor:</strong> {{ values[2] }}</p>
-                                    <p><strong>Description:</strong> {{ values[3] }}</p>
-                                    <p><strong>Start Date:</strong> {{ values[4] }}</p>
-                                    <p><strong>End Date:</strong> {{ values[5] }}</p>
-                                    <p><strong>Budget:</strong> {{ values[6] }}</p>
-                                    <p><strong>Visibility:</strong> {{ values[7] }}</p>
-                                    <p><strong>Goals:</strong> {{ values[8] }}</p>
-                                    <p><strong>Niche:</strong> {{ values[9] }}</p>
-                                {% elif values[0] == "influencer" %}
-                                    <p><strong>User Name:</strong> {{ values[1] }}</p>
-                                    <p><strong>Name:</strong> {{ values[5] }}</p>
-                                    <p><strong>Niche:</strong> {{ values[4] }}</p>
-                                    <p><strong>Platform:</strong> {{ values[2] }}</p>
-                                    <p><strong>Followers:</strong> {{ values[3] }}</p>
-                                    
-                                {% elif values[0] == "sponsor" %}
-                                    <p><strong>Name:</strong> {{ values[3] }}</p>
-                                    <p><strong>User Name:</strong> {{ values[1] }}</p>
-                                    <p><strong>Industry:</strong> {{ values[2] }}</p>
-                                    
-                                    
-                                {% endif %}
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <!-- Modal for each item -->
+                    <div class="modal fade" id="Modal{{ item.type }}{{ item.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ModalLabel{{ item.type }}{{ item.id }}" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="ModalLabel{{ item.type }}{{ item.id }}">{{ item.name }}</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    {% if item.type == "campaign" %}
+                                        <p><strong>Name:</strong> {{ item.name }}</p>
+                                        <p><strong>Sponsor:</strong> {{ item.sponsor }}</p>
+                                        <p><strong>Description:</strong> {{ item.description }}</p>
+                                        <p><strong>Start Date:</strong> {{ item.start_date }}</p>
+                                        <p><strong>End Date:</strong> {{ item.end_date }}</p>
+                                        <p><strong>Budget:</strong> {{ item.budget }}</p>
+                                        <p><strong>Visibility:</strong> {{ item.visibility }}</p>
+                                        <p><strong>Goals:</strong> {{ item.goals }}</p>
+                                        <p><strong>Niche:</strong> {{ item.niche }}</p>
+                                    {% elif item.type == "influencer" %}
+                                        <p><strong>Name:</strong> {{ item.name }}</p>
+                                        <p><strong>UserName:</strong> {{ item.user_name }}</p>
+                                        <p><strong>Niche:</strong> {{ item.niche }}</p>
+                                        <p><strong>Platform:</strong> {{ item.platform }}</p>
+                                        <p><strong>Followers:</strong> {{ item.followers }}</p>
+                                    {% elif item.type == "sponsor" %}
+                                        <p><strong>Name:</strong> {{ item.name }}</p>
+                                        <p><strong>User Name:</strong> {{ item.user_name }}</p>
+                                        <p><strong>Industry:</strong> {{ item.industry }}</p>
+                                    {% endif %}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                {% endfor %}
             {% endfor %}
         {% else %}
             <h5>No data to show</h5>
         {% endif %}
     </div>
-
 </body>
 </html>

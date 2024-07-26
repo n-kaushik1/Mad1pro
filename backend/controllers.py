@@ -44,7 +44,7 @@ def admindashboard():
     # Formatting flagged campaigns
     for campaign in flagged_campaigns:
         flagged_list[f"campaign_{campaign.id}"] = [
-            "campaign", campaign.name, campaign.sponsor_info.user_name, campaign.description,
+            "campaign", campaign.name, campaign.sponsor_info.name, campaign.description,
             campaign.start_date, campaign.end_date, campaign.budget, campaign.visibility, campaign.goals
         ]
     
@@ -57,7 +57,7 @@ def admindashboard():
     # Formatting flagged sponsors
     for sponsor in flagged_sponsors:
         flagged_list[f"sponsor_{sponsor.id}"] = [
-            "sponsor", sponsor.user_name, sponsor.industry
+            "sponsor", sponsor.name, sponsor.industry
         ]
     
     # Fetching ad requests for each campaign
@@ -125,46 +125,84 @@ def adminsearch():
     if 'admin' not in session:
         return redirect(url_for('adminlogin'))
     
-    # Fetch not flagged campaigns, influencers, and sponsors
-    Notflagged_campaigns = Campaign_Info.query.filter_by(flagged="NO").all()
-    Notflagged_influencers = Influencer_Info.query.filter_by(flagged="NO").all()
-    Notflagged_sponsors = Sponsor_Info.query.filter_by(flagged="NO").all()
+    # Get search parameters
+    query = request.args.get('query', '')
+    niche = request.args.get('niche', '')
+    min_followers = request.args.get('min_followers', 0, type=int)
+    
+    # Fetching not flagged campaigns and applying filters
+    notflagged_campaigns_query = Campaign_Info.query.filter_by(flagged="NO")
+    
+    if query:
+        notflagged_campaigns_query = notflagged_campaigns_query.filter(Campaign_Info.name.ilike(f"%{query}%"))
+    
+    if niche:
+        notflagged_campaigns_query = notflagged_campaigns_query.filter(Campaign_Info.niche == niche)
+    
+    notflagged_campaigns = notflagged_campaigns_query.all()
+
+
+    # Fetching not flagged sponsors and applying filters
+    notflagged_sponsors_query = Sponsor_Info.query.filter_by(flagged="NO")
+    
+    if query:
+        notflagged_sponsors_query = notflagged_sponsors_query.filter(Sponsor_Info.name.ilike(f"%{query}%"))
+    
+    notflagged_sponsors = notflagged_sponsors_query.all()
+
+    # Fetching not flagged influencers and applying filters
+    notflagged_influencers_query = Influencer_Info.query.filter_by(flagged="NO")
+    
+    if query:
+        notflagged_influencers_query = notflagged_influencers_query.filter(Influencer_Info.name.ilike(f"%{query}%"))
+    
+    if niche:
+        notflagged_influencers_query = notflagged_influencers_query.filter(Influencer_Info.niche == niche)
+    
+    if min_followers:
+        notflagged_influencers_query = notflagged_influencers_query.filter(Influencer_Info.Followers >= min_followers)
+    
+    
+    notflagged_influencers = notflagged_influencers_query.all()
     
     # Create the active list with detailed information
     Active_list = {
-        f"campaign_{campaign.id}": [
-            "campaign", 
-            campaign.name, 
-            campaign.sponsor_info.user_name,
-            campaign.description,
-            campaign.start_date,
-            campaign.end_date,
-            campaign.budget,
-            campaign.visibility,
-            campaign.goals,
-            campaign.niche
-        ] for campaign in Notflagged_campaigns
+        "campaigns": [
+            {
+                "type": "campaign", 
+                "id": campaign.id,
+                "name": campaign.name, 
+                "sponsor": campaign.sponsor_info.name,
+                "description": campaign.description,
+                "start_date": campaign.start_date,
+                "end_date": campaign.end_date,
+                "budget": campaign.budget,
+                "visibility": campaign.visibility,
+                "goals": campaign.goals,
+                "niche": campaign.niche
+            } for campaign in notflagged_campaigns
+        ],
+        "influencers": [
+            {
+                "type": "influencer",
+                "id": influencer.id,
+                "name": influencer.name, 
+                "niche": influencer.niche, 
+                "platform": influencer.platform,
+                "followers": influencer.Followers,
+                "user_name": influencer.user_name
+            } for influencer in notflagged_influencers
+        ],
+        "sponsors": [
+            {
+                "type": "sponsor",
+                "id": sponsor.id,
+                "name": sponsor.name,
+                "industry": sponsor.industry,
+                "user_name": sponsor.user_name 
+            } for sponsor in notflagged_sponsors
+        ]
     }
-    
-    Active_list.update({
-        f"influencer_{influencer.id}": [
-            "influencer", 
-            influencer.user_name, 
-            influencer.platform,
-            influencer.Followers,
-            influencer.niche,
-            influencer.name
-        ] for influencer in Notflagged_influencers
-    })
-    
-    Active_list.update({
-        f"sponsor_{sponsor.id}": [
-            "sponsor", 
-            sponsor.user_name, 
-            sponsor.industry,
-            sponsor.name
-        ] for sponsor in Notflagged_sponsors
-    })
     
     return render_template("adminsearch.html", List=Active_list)
 
@@ -227,6 +265,14 @@ def sponsordashboard():
     sponsor = Sponsor_Info.query.filter_by(user_name=uname).first()
     user=sponsor.name
     campaigns = Campaign_Info.query.filter_by(sponsor_id=sponsor.id, flagged="NO").all()
+    sponsor_list = {
+        sponsor.id: [
+            sponsor.name,
+            sponsor.user_name,
+            sponsor.industry,
+            sponsor.password
+        ]
+    }
 
     active_campaigns = {}
     progress_dict = {}
@@ -245,9 +291,7 @@ def sponsordashboard():
                 'goals': campaign.goals,
                 'niche': campaign.niche,
                 'progress': progress
-            }
-
-       
+            }  
     
     ad_requests = Adrequest_Info.query.join(Campaign_Info).filter(
         Campaign_Info.sponsor_id == sponsor.id,
@@ -265,7 +309,25 @@ def sponsordashboard():
         'influencer_username': request.influencer_username
     } for request in ad_requests]
     
-    return render_template("sponsordashboard.html", campaigns=active_campaigns, user=user ,ad_requests=ad_request_list,progress_dict=progress_dict)
+    return render_template("sponsordashboard.html", campaigns=active_campaigns, user=user ,ad_requests=ad_request_list,progress_dict=progress_dict,sponsor=sponsor_list)
+
+@app.route("/editprofile_spon/<int:sponsor_id>", methods=["POST"])
+def editprofile_spon(sponsor_id):
+    if 'sponsor' not in session:
+        return redirect(url_for('userlogin'))
+
+    uname = session.get('sponsor')
+    influencer = Sponsor_Info.query.filter_by(user_name=uname).first()
+
+    if request.method == "POST":
+
+        influencer.name = request.form.get("name")
+        influencer.user_name = request.form.get("user_name")
+        influencer.industry = request.form.get("industry")
+        influencer.password = request.form.get("password")
+        db.session.commit()
+
+        return redirect(url_for('sponsordashboard')) 
 
 @app.route("/sponsorstats")
 def sponsorstats():
@@ -274,9 +336,16 @@ def sponsorstats():
     
     uname = session.get('sponsor')
     sponsor = Sponsor_Info.query.filter_by(user_name=uname).first()
+    campaigns=Campaign_Info.query.filter(Campaign_Info.sponsor_id == sponsor.id)
+    active_campaigns_count = 0
+    completed_campaigns_count = 0
 
-    active_campaigns_count = Campaign_Info.query.filter(Campaign_Info.end_date >= datetime.today().strftime('%Y-%m-%d')).count()
-    completed_campaigns_count = Campaign_Info.query.filter(Campaign_Info.end_date < datetime.today().strftime('%Y-%m-%d')).count()
+    for campaign in campaigns:
+     progress = calculate_progress(campaign.start_date, campaign.end_date)
+     if progress<100:
+         active_campaigns_count += 1
+     else:     
+      completed_campaigns_count += 1
 
     return render_template("sponsorstats.html", 
                            active_campaigns_count=active_campaigns_count, 
@@ -304,41 +373,46 @@ def reject_request_spon(request_id):
 def sponsorsearch():
     if 'sponsor' not in session:
         return redirect(url_for('userlogin'))
+    
     uname = session.get('sponsor')
-
+    
+    # Get search parameters
     query = request.args.get('query', '')
     niche = request.args.get('niche', '')
     min_followers = request.args.get('min_followers', 0, type=int)
-    max_followers = request.args.get('max_followers', float('inf'), type=int)
-
-    # Fetching not flagged campaigns
-    Notflagged_campaigns = Campaign_Info.query.filter_by(flagged="NO").all()
-
-    # Fetching not flagged influencers and applying filters
-    influencers_query = Influencer_Info.query.filter_by(flagged="NO")
-
+    
+    # Fetching not flagged campaigns and applying filters
+    notflagged_campaigns_query = Campaign_Info.query.filter_by(flagged="NO")
+    
     if query:
-        influencers_query = influencers_query.filter(
-            Influencer_Info.user_name.ilike(f'%{query}%') | 
-            Influencer_Info.platform.ilike(f'%{query}%')
-        )
+        notflagged_campaigns_query = notflagged_campaigns_query.filter(Campaign_Info.name.ilike(f"%{query}%"))
     
     if niche:
-        influencers_query = influencers_query.filter_by(role=niche)
+        notflagged_campaigns_query = notflagged_campaigns_query.filter(Campaign_Info.niche == niche)
     
-    influencers_query = influencers_query.filter(
-        Influencer_Info.Followers >= min_followers,
-        Influencer_Info.Followers <= max_followers
-    )
+    notflagged_campaigns = notflagged_campaigns_query.all()
 
-    Notflagged_influencers = influencers_query.all()
+    # Fetching not flagged influencers and applying filters
+    notflagged_influencers_query = Influencer_Info.query.filter_by(flagged="NO")
+    
+    if query:
+        notflagged_influencers_query = notflagged_influencers_query.filter(Influencer_Info.name.ilike(f"%{query}%"))
+    
+    if niche:
+        notflagged_influencers_query = notflagged_influencers_query.filter(Influencer_Info.niche == niche)
+    
+    if min_followers:
+        notflagged_influencers_query = notflagged_influencers_query.filter(Influencer_Info.followers >= min_followers)
+    
+    
+    notflagged_influencers = notflagged_influencers_query.all()
 
     # Create the active list with all information
-    Active_list = {
+    active_list = {
         f"campaign_{campaign.id}": [
             "campaign", 
             campaign.name, 
-            campaign.sponsor_info.user_name,
+            campaign.sponsor_info.name,
             campaign.description,
             campaign.start_date,
             campaign.end_date,
@@ -346,21 +420,27 @@ def sponsorsearch():
             campaign.visibility,
             campaign.goals,
             campaign.niche
-        ] for campaign in Notflagged_campaigns
+        ] for campaign in notflagged_campaigns
     }
     
-    Active_list.update({
+    active_list.update({
         f"influencer_{influencer.id}": [
-            "influencer", 
-            influencer.user_name, 
+            "influencer",
+            influencer.name, 
             influencer.platform,
             influencer.Followers,
-            influencer.name
-        ] for influencer in Notflagged_influencers
+            influencer.niche
+        ] for influencer in notflagged_influencers
     })
 
     success_message = request.args.get('success_message')
-    return render_template("sponsorsearch.html", List=Active_list, user=uname, success_message=success_message, campaigns=Notflagged_campaigns)
+    
+    return render_template("sponsorsearch.html", 
+                           List=active_list, 
+                           user=uname, 
+                           success_message=success_message, 
+                           campaigns=notflagged_campaigns)
+
 
 
 
@@ -634,14 +714,24 @@ def influencerdashboard():
         Adrequest_Info.status == 'Accepted'
     ).all()
 
+    active_campaigns = {}
     progress_dict = {}
+
     for campaign in campaigns:
         progress = calculate_progress(campaign.start_date, campaign.end_date)
-        progress_dict[campaign.id] = progress
-
-
-    if progress_dict[campaign.id]<100:
-        campaign_list=campaigns
+        if progress < 100:
+            progress_dict[campaign.id] = progress
+            active_campaigns[campaign.id] = {
+                'name': campaign.name,
+                'description': campaign.description,
+                'start_date': campaign.start_date,
+                'end_date': campaign.end_date,
+                'budget': campaign.budget,
+                'visibility': campaign.visibility,
+                'goals': campaign.goals,
+                'niche': campaign.niche,
+                'progress': progress
+            }  
     
     # Fetch new ad requests for this influencer
     new_requests = Adrequest_Info.query.filter(
@@ -659,7 +749,7 @@ def influencerdashboard():
         ]
     }
 
-    return render_template("influencerdashboard.html", campaigns=campaign_list, new_requests=new_requests, user=user,progress_dict=progress_dict,influencer=influencer_list)
+    return render_template("influencerdashboard.html", campaigns=active_campaigns, new_requests=new_requests, user=user,progress_dict=progress_dict,influencer=influencer_list)
 
 
 @app.route("/editprofile_influ/<int:influencer_id>", methods=["POST"])
@@ -718,13 +808,10 @@ def influencerstats():
     pending_requests_count = Adrequest_Info.query.filter_by(influencer_username=uname, status="Pending").count()
     completed_requests_count = Adrequest_Info.query.filter_by(influencer_username=uname, status="Completed").count()
     
-    total_campaigns_count = Campaign_Info.query.join(Adrequest_Info).filter(
-        Adrequest_Info.influencer_username == uname
-    ).count()
+    total_campaigns_count = db.session.query(db.func.count(db.distinct(Campaign_Info.id))).join(Adrequest_Info, Adrequest_Info.campaign_id == Campaign_Info.id
+    ).filter(Adrequest_Info.influencer_username == uname).scalar() or 0
     
-    average_payment_amount = db.session.query(db.func.avg(Adrequest_Info.payment_amount)).filter(
-        Adrequest_Info.influencer_username == uname
-    ).scalar()
+    average_payment_amount = db.session.query(db.func.avg(Adrequest_Info.payment_amount)).filter(Adrequest_Info.influencer_username == uname).scalar() or 0.0
     
     return render_template("influencerstats.html", 
                            accepted_requests_count=accepted_requests_count, 
@@ -746,7 +833,7 @@ def influencersearch():
         f"campaign_{campaign.id}": [
             "campaign", 
             campaign.name, 
-            campaign.sponsor_info.user_name,
+            campaign.sponsor_info.name,
             campaign.description,
             campaign.start_date,
             campaign.end_date,
@@ -862,7 +949,7 @@ def fetch_campaigns():
             'budget': campaign.budget,
             'visibility':campaign.visibility,
             'goals':campaign.goals,
-            'sponsor_name':campaign.sponsor_info.user_name,
+            'sponsor_name':campaign.sponsor_info.name,
             'id':campaign.id,
             'niche':campaign.niche
         }

@@ -27,13 +27,13 @@
                 <input type="text" name="query" placeholder="Search by name">
                 <select name="niche">
                     <option value="">Select Niche</option>
-                    <option value="fashion">Tech</option>
-                    <option value="tech">Tech</option>
-                    <option value="food">Food</option>
-                    <!-- Add more options as needed -->
+                    <option value="Tech">Tech</option>
+                    <option value="Fashion">Fashion</option>
+                    <option value="Food">Food</option>
+                    <option value="Health and Fitness">Health and Fitness</option>
+                    <option value="Others">Others</option>
                 </select>
                 <input type="number" name="min_followers" placeholder="Min Followers">
-                <input type="number" name="max_followers" placeholder="Max Followers">
                 <button type="submit">Filter</button>
             </form>
         </div>
@@ -73,10 +73,10 @@
                                 <p><strong>Goals:</strong> {{ values[8] }}</p>
                                 <p><strong>Niche:</strong> {{ values[9] }}</p>
                             {% elif values[0] == "influencer" %}
-                                <p><strong>Name:</strong> {{ values[4] }}</p>
-                                <p><strong>User Name:</strong> {{ values[1] }}</p>
+                                <p><strong>Name:</strong> {{ values[1] }}</p>
                                 <p><strong>Platform:</strong> {{ values[2] }}</p>
                                 <p><strong>Followers:</strong> {{ values[3] }}</p>
+                                <p><strong>Niche:</strong> {{ values[4] }}</p>
                                 <form action="{{ url_for('send_request') }}" method="POST" style="display: inline;">
                                     <input type="hidden" name="influencer_username" value="{{ values[1] }}">
                                     <div class="mb-3">

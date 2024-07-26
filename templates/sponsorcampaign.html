@@ -16,7 +16,7 @@
              <a href="/sponsordashboard"  class="bt">Profile</a>
              <a href="/sponsorcampaign" id="active" class="bt">Campaigns</a>
              <a href="/sponsorsearch" class="bt">Find</a>
-             <a href="#" class="bt">Stats</a>
+             <a href="/sponsorstats" class="bt">Stats</a>
              <a href="/userlogin" class="bt">Logout</a>
             </div>
           </nav>     
@@ -92,7 +92,15 @@
           </div>
           <div class="mb-3">
             <label for="niche" class="form-label">Niche</label>
-            <textarea class="form-control" id="niche" name="niche" rows="1" required></textarea>
+            <!-- <textarea class="form-control" id="niche" name="niche" rows="1" required></textarea> -->
+            <select name="niche" id="niche" class="form-control" required>
+              <option value="">Select Niche</option>
+              <option value="Tech">Tech</option>
+              <option value="Fashion">Fashion</option>
+              <option value="Food">Food</option>
+              <option value="Health and Fitness">Health and Fitness</option>
+              <option value="Others">Others</option>
+          </select>
           </div>
           <div class="mb-3">
             <label for="visibility" class="form-label">Visibility</label>
@@ -148,7 +156,16 @@
           </div>
           <div class="mb-3">
             <label for="editniche{{ id }}" class="form-label">Niche</label>
-            <textarea class="form-control" id="editniche{{ id }}" name="niche" rows="1" required>{{ details[8] }}</textarea>
+            <!-- <textarea class="form-control" id="editniche{{ id }}" name="niche" rows="1" required>{{ details[8] }}</textarea> -->
+            <select name="niche" id="editniche{{ id }}" class="form-control" required>
+              <option value="">Select Niche</option>
+              <option value="fashion" {% if details[8] == "Tech" %} selected {% endif %}>Tech</option>
+              <option value="tech" {% if details[8] == "Fashion" %} selected {% endif %}>Fashion</option>
+              <option value="food" {% if details[8] == "Food" %} selected {% endif %}>Food</option>
+              <option value="Health and Fitness" {% if details[8] == "Health and Fitness " %} selected {% endif %}>Health and Fitness</option>
+              <option value="Others" {% if details[8] == "Others" %} selected {% endif %} >Others</option>
+          </select>
+            
           </div>
           <div class="mb-3">
             <label for="editVisibility{{ id }}" class="form-label">Visibility</label>

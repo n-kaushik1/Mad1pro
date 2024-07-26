@@ -10,7 +10,7 @@
 <body>
     <div class="form_container">
       <h1 id="h1">Influencer Registration</h1>  
-      <form class="form" action="/Influencerrregistration" method="post">
+      <form class="form" action="/Influencerregistration" method="post">
         <div class="mb-3">
           <label for="exampleInputEmail1" class="form-label">Username</label>
           <input type="username" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" name="uname">
@@ -26,7 +26,15 @@
         </div>
         <div class="mb-3">
           <label for="exampleInputniche" class="form-label"> Niche </label>
-          <input type="username" class="form-control" id="exampleInputniche" aria-describedby="emailHelp" name="niche">
+          <!-- <input type="username" class="form-control" id="exampleInputniche" aria-describedby="emailHelp" name="niche"> -->
+          <select name="niche" class="form-control" id="exampleInputniche" aria-describedby="emailHelp">
+            <option value="">Select Niche</option>
+            <option value="Tech">Tech</option>
+            <option value="Fashion">Fashion</option>
+            <option value="Food">Food</option>
+            <option value="Health and Fitness">Health and Fitness</option>
+            <option value="Others">Others</option>
+        </select>
         </div>
        
         <div class="mb-3">
