@@ -7,7 +7,6 @@ import os
 app.secret_key = os.urandom(24)
 
 
-
 @app.route("/",methods=["GET","POST"])
 def login():
     return render_template("login.html")
@@ -255,6 +254,14 @@ def userlogin():
             return render_template("userlogin.html",msg="Invalid credentials!!")
       return render_template("userlogin.html")
 
+# @app.route('/logoutuser')
+# def logout():
+#     session.pop('influencer', None)
+#     session.pop('sponsor', None)
+#     return redirect(url_for('userlogin'))
+
+
+
 #sponsor_page_activity
 @app.route("/sponsordashboard")
 def sponsordashboard():
@@ -402,7 +409,7 @@ def sponsorsearch():
         notflagged_influencers_query = notflagged_influencers_query.filter(Influencer_Info.niche == niche)
     
     if min_followers:
-        notflagged_influencers_query = notflagged_influencers_query.filter(Influencer_Info.followers >= min_followers)
+        notflagged_influencers_query = notflagged_influencers_query.filter(Influencer_Info.Followers >= min_followers)
     
     
     notflagged_influencers = notflagged_influencers_query.all()
@@ -429,7 +436,8 @@ def sponsorsearch():
             influencer.name, 
             influencer.platform,
             influencer.Followers,
-            influencer.niche
+            influencer.niche,
+            influencer.user_name
         ] for influencer in notflagged_influencers
     })
 
@@ -720,6 +728,7 @@ def influencerdashboard():
     for campaign in campaigns:
         progress = calculate_progress(campaign.start_date, campaign.end_date)
         if progress < 100:
+            sponsor_info = Sponsor_Info.query.get(campaign.sponsor_id)
             progress_dict[campaign.id] = progress
             active_campaigns[campaign.id] = {
                 'name': campaign.name,
@@ -730,7 +739,9 @@ def influencerdashboard():
                 'visibility': campaign.visibility,
                 'goals': campaign.goals,
                 'niche': campaign.niche,
-                'progress': progress
+                'progress': progress,
+                'sponsor_info': sponsor_info,
+                'adrequest_info': campaign.adrequest_info 
             }  
     
     # Fetch new ad requests for this influencer
@@ -827,8 +838,23 @@ def influencerstats():
 def influencersearch():
     if 'influencer' not in session:
         return redirect(url_for('userlogin'))
+    
+    # Get search parameters
+    query = request.args.get('query', '')
+    niche = request.args.get('niche', '')
+    
+    # Fetching not flagged campaigns and applying filters
+    notflagged_campaigns_query = Campaign_Info.query.filter_by(flagged="NO",visibility="public")
+    
+    if query:
+        notflagged_campaigns_query = notflagged_campaigns_query.filter(Campaign_Info.name.ilike(f"%{query}%"))
+    
+    if niche:
+        notflagged_campaigns_query = notflagged_campaigns_query.filter(Campaign_Info.niche == niche)
+    
+    notflagged_campaigns = notflagged_campaigns_query.all()
 
-    Notflagged_campaigns = Campaign_Info.query.filter_by(flagged="NO", visibility="public").all()
+   
     Active_list = {
         f"campaign_{campaign.id}": [
             "campaign", 
@@ -841,7 +867,7 @@ def influencersearch():
             campaign.goals,
             campaign.niche     
         ]
-        for campaign in Notflagged_campaigns
+        for campaign in notflagged_campaigns
     }
     success_message = request.args.get('success_message')
     return render_template("influencersearch.html", List=Active_list, success_message=success_message)

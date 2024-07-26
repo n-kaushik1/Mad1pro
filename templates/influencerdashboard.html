@@ -34,23 +34,23 @@
             <div class="campaigns">
                 <h3>Active Campaigns:</h3>
                 {% if campaigns %}
-                    {% for campaign in campaigns %}
+                    {% for campaign_id, campaign in campaigns.items() %}
                         <div class="item-unique">
-                            <div>{{ campaign.name }} | Progress: {{ progress_dict[campaign.id] }}%</div>
-                            <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#Modal{{ campaign.id }}" id="modalinfludashview">View</button>
+                            <div>{{ campaign.name }} | Progress: {{ campaign.progress }}%</div>
+                            <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#Modal{{ campaign_id }}" id="modalinfludashview">View</button>
                         </div>
 
                         <!-- Modal for each campaign -->
-                        <div class="modal fade" id="Modal{{ campaign.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ModalLabel{{ campaign.id }}" aria-hidden="true">
+                        <div class="modal fade" id="Modal{{ campaign_id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="ModalLabel{{ campaign_id }}" aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5 class="modal-title" id="ModalLabel{{ campaign.id }}">{{ campaign.name }}</h5>
+                                        <h5 class="modal-title" id="ModalLabel{{ campaign_id }}">{{ campaign.name }}</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <p><strong>Name:</strong> {{ campaign.name }}</p>
-                                        <p><strong>Sponsor:</strong> {{ campaign.sponsor_info.name }}</p>
+                                        <p><strong>Sponsor:</strong> {{ campaign.sponsor_info.name if campaign.sponsor_info else 'N/A' }}</p>
                                         <p><strong>Description:</strong> {{ campaign.description }}</p>
                                         <p><strong>Start Date:</strong> {{ campaign.start_date }}</p>
                                         <p><strong>End Date:</strong> {{ campaign.end_date }}</p>
@@ -83,7 +83,7 @@
                 {% if new_requests %}
                     {% for request in new_requests %}
                         <div class="request">
-                            <div>{{ request.name }} | {{ request.campaign_info.sponsor_info.user_name }}</div>
+                            <div>{{ request.name }} | {{ request.campaign_info.sponsor_info.name if request.campaign_info.sponsor_info else 'N/A' }}</div>
                             <button type="button" class="view-unique" data-bs-toggle="modal" data-bs-target="#RequestModal{{ request.id }}" id="modalinfludashview">view</button>
                             <form action="{{ url_for('accept_request', request_id=request.id) }}" method="POST" style="display:inline;">
                                 <button type="submit" class="button button-accept">accept</button>
@@ -107,7 +107,7 @@
                                         <p><strong>Requirements:</strong> {{ request.requirements }}</p>
                                         <p><strong>Payment Amount:</strong> {{ request.payment_amount }}</p>
                                         <p><strong>Campaign:</strong> {{ request.campaign_info.name }}</p>
-                                        <p><strong>Sponsor:</strong> {{ request.campaign_info.sponsor_info.user_name }}</p>
+                                        <p><strong>Sponsor:</strong> {{ request.campaign_info.sponsor_info.name if request.campaign_info.sponsor_info else 'N/A' }}</p>
                                     </div>
                                     <div class="modal-footer">
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -122,7 +122,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- Edit Profile Modal -->
     {% for id, details in influencer.items() %}
@@ -141,7 +140,14 @@
                         </div>
                         <div class="mb-3">
                             <label for="editprofileniche{{ id }}" class="form-label">Niche</label>
-                            <textarea class="form-control" id="editprofileniche{{ id }}" name="niche" rows="1" required>{{ details[1] }}</textarea>
+                    
+                            <select name="niche" class="form-control" id="editprofileniche{{ id }}" required>
+                                <option value="Tech">Tech</option>
+                                <option value="Fashion">Fashion</option>
+                                <option value="Food">Food</option>
+                                <option value="Health and Fitness">Health and Fitness</option>
+                                <option value="Others">Others</option>
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label for="editprofileplatform{{ id }}" class="form-label">Platform</label>

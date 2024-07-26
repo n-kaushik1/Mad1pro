@@ -24,8 +24,18 @@
     </header>
     <div class="container">
         <div class="search-filter">
-            <input type="text" placeholder="Search">
-            <button>Filter</button>
+            <<form method="GET" action="/influencersearch" id="search-form">
+                <input type="text" name="query" placeholder="Search by name">
+                <select name="niche">
+                    <option value="">Select Niche</option>
+                    <option value="Tech">Tech</option>
+                    <option value="Fashion">Fashion</option>
+                    <option value="Food">Food</option>
+                    <option value="Health and Fitness">Health and Fitness</option>
+                    <option value="Others">Others</option>
+                </select>
+                <button type="submit">Filter</button>
+            </form>
         </div>
         
          <!-- Display success message if exists -->

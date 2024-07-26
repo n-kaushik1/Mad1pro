@@ -156,11 +156,9 @@
           </div>
           <div class="mb-3">
             <label for="editniche{{ id }}" class="form-label">Niche</label>
-            <!-- <textarea class="form-control" id="editniche{{ id }}" name="niche" rows="1" required>{{ details[8] }}</textarea> -->
             <select name="niche" id="editniche{{ id }}" class="form-control" required>
-              <option value="">Select Niche</option>
-              <option value="fashion" {% if details[8] == "Tech" %} selected {% endif %}>Tech</option>
-              <option value="tech" {% if details[8] == "Fashion" %} selected {% endif %}>Fashion</option>
+              <option value="Tech" {% if details[8] == "Tech" %} selected {% endif %}>Tech</option>
+              <option value="Fashion" {% if details[8] == "Fashion" %} selected {% endif %}>Fashion</option>
               <option value="food" {% if details[8] == "Food" %} selected {% endif %}>Food</option>
               <option value="Health and Fitness" {% if details[8] == "Health and Fitness " %} selected {% endif %}>Health and Fitness</option>
               <option value="Others" {% if details[8] == "Others" %} selected {% endif %} >Others</option>
