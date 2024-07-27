@@ -9,8 +9,13 @@
   
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <title>Influencer Dashboard page</title>
+    <style>
+        body,html{
+            height: 100%;
+        }
+    </style>
 </head>
-<body>
+<body class="bfd5">
     <header>     
         <nav class="navigation">
             <h1 id="admindash"><b>Influencer's Dashboard</b></h1>
@@ -24,8 +29,8 @@
     </header>
     <div class="container">
         <div class="search-filter">
-            <<form method="GET" action="/influencersearch" id="search-form">
-                <input type="text" name="query" placeholder="Search by name">
+            <form method="GET" action="/influencersearch" id="search-form">
+                <input type="text" placeholder="Search by name" name="searchbyname" >
                 <select name="niche">
                     <option value="">Select Niche</option>
                     <option value="Tech">Tech</option>
@@ -68,9 +73,9 @@
                                  <p><strong>Description:</strong> {{ values[3] }}</p>
                                  <p><strong>Start Date:</strong> {{ values[4] }}</p>
                                  <p><strong>End Date:</strong> {{ values[5] }}</p>
-                                 
-                                 <p><strong>Goals:</strong> {{ values[7] }}</p>
                                  <p><strong>Niche:</strong> {{ values[8] }}</p>
+                                 <p><strong>Goals:</strong> {{ values[7] }}</p>
+                                 
                                  <form action="{{ url_for('send_request_influ') }}" method="POST">
                                     <input type="hidden" name="campaign_id" value="{{ key.split('_')[1] }}">
                                     <div class="mb-3">

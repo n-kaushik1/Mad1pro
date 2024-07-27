@@ -9,10 +9,10 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <title>Admin Stats</title>
 </head>
-<body >
+<body class="bfdadminstats">
     <header>
         <nav class="navigation">
-            <h1 id="admindash"><b>Admin's Dashboard</b></h1>
+            <h1 id="admindash"><b>Admin's Stats</b></h1>
             <div id="admin_button">
                 <a href="/admindashboard" class="bt">Info</a>
                 <a href="/adminsearch" class="bt">Find</a>
@@ -125,5 +125,6 @@
         new Chart(document.getElementById('flaggedChart'), configFlagged);
         new Chart(document.getElementById('statusChart'), configStatus);
     </script>
+    
 </body>
 </html>

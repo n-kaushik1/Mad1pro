@@ -8,7 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Sponsor Dashboard page</title>
 </head>
-<body>
+<body class="bfdcamp">
     <header>     
           <nav class="navigation">
             <h1 id="admindash"><b>Sponsor -{{user}}</b></h1>
@@ -23,13 +23,15 @@
     </header>
     <div class="container">
       <div class="search-filter">
-          <input type="text" placeholder="Search">
-          <button>Filter</button>
+          <form method="GET" action="/sponsorcampsearch" id="search-form">
+                <input type="text" name="searchbyname" placeholder="Search by name">
+                <button type="submit">Filter</button>
+            </form>
       </div>
   
       <br>
       {%if campaigns%}
-      <div><h3 id="activeh3">Active Campaigns:</h3></div>
+      <div><h3 id="activeh4">Active Campaigns:</h3></div>
       <ul class="list-group">
           {% for id, details in campaigns.items() %}
               <div class="list-group-item">

@@ -7,8 +7,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <title>Admin Dashboard Search Page</title>
+    <style>
+        body,html{
+            height: 100%;
+        }
+    </style>
 </head>
-<body>
+<body class="bfd5">
     <header>
         <nav class="navigationsearch">
             <h1 id="admindash"><b>Admin's Dashboard</b></h1>
@@ -23,7 +28,7 @@
     <div class="container">
         <div class="search-filter">
             <form method="GET" action="/adminsearch" id="search-form">
-                <input type="text" name="query" placeholder="Search by name">
+                <input type="text" name="searchname" placeholder="Search by name">
                 <select name="niche">
                     <option value="">Select Niche</option>
                     <option value="Tech">Tech</option>
@@ -32,7 +37,6 @@
                     <option value="Health and Fitness">Health and Fitness</option>
                     <option value="Others">Others</option>
                 </select>
-                <input type="number" name="min_followers" placeholder="Min Followers">
                 <button type="submit">Filter</button>
             </form>
         </div>

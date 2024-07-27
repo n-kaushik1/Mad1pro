@@ -4,15 +4,19 @@
 }
 .form_container{
     display: flex;
-    height: 300px;width:27%;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     margin: 10% 37%;
+    border: #040b12 solid 2px;
+    padding-bottom: 4px;
+    background-color: #d5d8cf;
+    
     
 }
 .form{
     padding: auto;
+    
 }
 
 
@@ -45,6 +49,94 @@
 
 
 }
+.bfd1{
+    display: flex;
+    background-image:url(/static/img/img2.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 100%;
+    align-items: center;
+}
+.bfd2{
+    display: flex;
+    background-image:url(/static/img/img1.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    height: 100%;
+    align-items: center;
+}
+.bfd3{
+    background-image:url(/static/img/img-dash.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+.bfd33{
+    background-image:url(/static/img/img-stats.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.bfd334{
+    background-image:url(/static/img/img-stats2.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+.bfd4{
+    background-image:url(/static/img/img-dash2.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+.bfd5{
+    background-image:url(/static/img/img-searchi.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+.bfd55{
+    background-image:url(/static/img/img-searchs.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+.bfdreg{
+    background-image:url(/static/img/img-reg.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+.bfdadmindash{
+    background-image:url(/static/img/img-admindash.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+.bfdadminstats{
+    background-image:url(/static/img/img-adminstats.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+.bfdads{
+    background-image:url(/static/img/img-ads.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+.bfdcamp{
+    background-image:url(/static/img/img-camp.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
+
+
 .bfd{
     display: flex;
     background-image:url(/static/img/back_image.jpg);
@@ -150,10 +242,7 @@
 
 /* adminsearch */
 
-.container {
-    padding: 20px;
 
-}
 .search-filter {
     display: flex;
     justify-content: end;
@@ -212,7 +301,7 @@
 }
 .container {
     display: inline-flexbox;
-    background-color: #fff;
+    background-color: #f6f5f1;
     border-radius: 5px;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -285,6 +374,8 @@
 #activeh3{
     margin-left: 30px;
     margin-top: 30px;
+    color: #e8f405;
+    font-weight: 700;
 }
 
 /* List styles */
@@ -369,13 +460,22 @@
     width: 100%;
     max-width: 600px; /* Maximum width of the chart */
     margin: 0 auto; /* Center the chart */
+    background-color: #d5d8cf;
+    padding: 4px;
 }
 
 .chart-canvas {
-    width: 100% !important; /* Make canvas take up the full width of the container */
-    height: 400px !important; /* Set the height of the chart */
+    width: 100% !important; /* Make canvas full width of the container */
+    height: 400px !important; /* Setting height of the chart */
 }
 
 #ee{
     margin-left: 200px;
+}
+
+#activeh4{
+    margin-left: 30px;
+    margin-top: 30px;
+    color: #101003;
+    font-weight: 700;
 }
