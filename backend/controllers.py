@@ -1039,24 +1039,6 @@ def fetch_campaignspublic():
             ]
     return campaign_list
 
-# def fetch_influencers():
-#     influencers=Influencer_Info.query.filter_by(flagged="NO").all()
-#     influencer_list={}
-#     for influencer in influencers:
-#             influencer_list[influencer.id] = {
-#                 user_name:influencer.user_name,
-#                 platform:influencer.platform,
-#                 Followers=influencer.platform
-#                 }
-#     return influencer_list
-
-# def fetch_sponsors():
-#     sponsors=Sponsor_Info.query.filter_by(flagged="NO").all()
-#     sponsor_list={}
-#     for sponsor in sponsors:
-#         if sponsor.id not in sponsor_list.keys():
-#             sponsor_list[sponsor.id] = [sponsor.user_name,sponsor.industry]
-#     return sponsor_list
 
 
         
