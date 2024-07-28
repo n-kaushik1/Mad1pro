@@ -50,7 +50,7 @@ def admindashboard():
     # Formatting flagged influencers
     for influencer in flagged_influencers: 
         flagged_list[f"influencer_{influencer.id}"] = [
-            "influencer", influencer.user_name, influencer.platform, influencer.Followers
+            "influencer", influencer.name,influencer.platform, influencer.Followers,influencer.niche,influencer.user_name
         ]
     
     # Formatting flagged sponsors
