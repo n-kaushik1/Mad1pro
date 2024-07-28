@@ -142,11 +142,11 @@
                             <label for="editprofileniche{{ id }}" class="form-label">Niche</label>
                     
                             <select name="niche" class="form-control" id="editprofileniche{{ id }}" required>
-                                <option value="Tech">Tech</option>
-                                <option value="Fashion">Fashion</option>
-                                <option value="Food">Food</option>
-                                <option value="Health and Fitness">Health and Fitness</option>
-                                <option value="Others">Others</option>
+                                <option value="Tech" {% if details[1] == "Tech" %} selected {% endif %}>Tech</option>
+                                <option value="Fashion" {% if details[1] == "Fashion" %} selected {% endif %}>Fashion</option>
+                                <option value="Food" {% if details[1] == "Food" %} selected {% endif %}>Food</option>
+                                <option value="Health and Fitness" {% if details[1] == "Health and Fitness" %} selected {% endif %}>Health and Fitness</option>
+                                <option value="Others" {% if details[1] == "Others" %} selected {% endif %} >Others</option>
                             </select>
                         </div>
                         <div class="mb-3">
